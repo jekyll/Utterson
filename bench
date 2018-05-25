@@ -10,11 +10,16 @@ mkdir "$TMPDIR"
 mkdir "$TMPDIR/source"
 mkdir "$TMPDIR/destination"
 
-BUNDLE_GEMFILE="$(pwd)/Gemfile"
-
 for SITE in $(cat "site-list"); do
 	SOURCE=$(mktemp -d "$TMPDIR/source/XXXXXX")
 	DESTINATION=${SOURCE/source/destination}
+	if [[ -f "$SOURCE/Gemfile" ]]; then
+		export BUNDLE_GEMFILE="$SOURCE/Gemfile"
+	else
+		export BUNDLE_GEMFILE="$(pwd)/Gemfile"
+	fi
+	echo "$BUNDLE_GEMFILE"
 	git clone --recurse-submodules -q "$SITE" "$SOURCE"
+	bundle install
 	bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION" --trace
 done
