@@ -1,3 +1,6 @@
-/sites
-/jekyll
 /Gemfile.lock
+/jekyll
+/results.csv
+/sites
+
+.sass-cache/
