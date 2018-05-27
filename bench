@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -e
 
+RESULTS="$(pwd)/results.csv"
+NUMBER_OF_RUNS=3
+
+if command -v gtime; then
+	TIME=$(which gtime)
+else
+	TIME=$(which time)
+fi
+
 # Create tmp/ directory
 export TMPDIR="$(pwd)/sites"
 if [[ -d $TMPDIR ]]; then
@@ -21,5 +30,8 @@ for SITE in $(cat "site-list"); do
 	fi
 	echo "$BUNDLE_GEMFILE"
 	bundle install
-	bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION" --trace
+	for ((i=0; i<NUMBER_OF_RUNS; ++i)); do
+		"$TIME" -ao "$RESULTS" -f"%P,%U,%e,$SITE" \
+			bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION" --trace
+	done
 done
