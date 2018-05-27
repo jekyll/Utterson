@@ -15,9 +15,8 @@ export TMPDIR="$(pwd)/sites"
 if [[ -d $TMPDIR ]]; then
 	rm -rf "$TMPDIR"
 fi
-mkdir "$TMPDIR"
-mkdir "$TMPDIR/source"
-mkdir "$TMPDIR/destination"
+mkdir -p "$TMPDIR/source"
+mkdir -p "$TMPDIR/destination"
 
 for SITE in $(cat "site-list"); do
 	SOURCE=$(mktemp -d "$TMPDIR/source/XXXXXX")
