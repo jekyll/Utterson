@@ -14,7 +14,7 @@ fi
 if [[ -n $REF ]]; then
 	VERSION=$REF
 elif [[ -n $PR ]]; then
-	VERSION=$PR
+	VERSION="#$PR"
 else
 	VERSION="unspecified"
 fi
