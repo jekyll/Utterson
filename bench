@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-ulimit -t 600
+ulimit -t 1200
 
 export BUNDLE_GEMFILE="$(pwd)/Gemfile"
 bundle update
@@ -8,7 +8,15 @@ bundle update
 NUMBER_OF_RUNS=3
 RESULTS="$(pwd)/results.csv"
 if [[ ! -s $RESULTS ]]; then
-	echo "percent of CPU this job got, user time in seconds, elapsed real time (wall clock) in seconds, site, Jekyll version" > $RESULTS
+	echo "Jekyll version, percent of CPU this job got, user time in seconds, elapsed real time (wall clock) in seconds, site" > $RESULTS
+fi
+
+if [[ -n $REF ]]; then
+	VERSION=$REF
+elif [[ -n $PR ]]; then
+	VERSION=$PR
+else
+	VERSION="unspecified"
 fi
 
 if command -v gtime; then
@@ -32,7 +40,7 @@ for SITE in $(cat "site-list"); do
 		git clone --recurse-submodules -q "$SITE" "$SOURCE"
 	fi
 	for ((i=0; i<NUMBER_OF_RUNS; ++i)); do
-		"$TIME" -ao "$RESULTS" -f"%P,%U,%e,$SITE" \
+		"$TIME" -ao "$RESULTS" -f"$VERSION,%P,%U,%e,$SITE" \
 			bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION" --trace
 	done
 done
