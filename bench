@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 set -e
+ulimit -t 600
 
-RESULTS="$(pwd)/results.csv"
+export BUNDLE_GEMFILE="$(pwd)/Gemfile"
+bundle update
+
 NUMBER_OF_RUNS=3
+RESULTS="$(pwd)/results.csv"
+if [[ ! -s $RESULTS ]]; then
+	echo "percent of CPU this job got, user time in seconds, elapsed real time (wall clock) in seconds, site, Jekyll version" > $RESULTS
+fi
 
 if command -v gtime; then
 	TIME=$(which gtime)
@@ -11,7 +18,7 @@ else
 fi
 
 # Create tmp/ directory
-export TMPDIR="$(pwd)/sites"
+TMPDIR="$(pwd)/sites"
 if [[ -d $TMPDIR ]]; then
 	rm -rf "$TMPDIR"
 fi
@@ -19,16 +26,11 @@ mkdir -p "$TMPDIR/source"
 mkdir -p "$TMPDIR/destination"
 
 for SITE in $(cat "site-list"); do
-	SOURCE=$(mktemp -d "$TMPDIR/source/XXXXXX")
+	SOURCE="$TMPDIR/source/$(md5 <<< $SITE)"
 	DESTINATION=${SOURCE/source/destination}
-	git clone --recurse-submodules -q "$SITE" "$SOURCE"
-	if [[ -f "$SOURCE/Gemfile" ]]; then
-		export BUNDLE_GEMFILE="$SOURCE/Gemfile"
-	else
-		export BUNDLE_GEMFILE="$(pwd)/Gemfile"
+	if [[ ! -d $SOURCE ]]; then
+		git clone --recurse-submodules -q "$SITE" "$SOURCE"
 	fi
-	echo "$BUNDLE_GEMFILE"
-	bundle install
 	for ((i=0; i<NUMBER_OF_RUNS; ++i)); do
 		"$TIME" -ao "$RESULTS" -f"%P,%U,%e,$SITE" \
 			bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION" --trace
