@@ -5,7 +5,7 @@ NR == 1 { next }
 { a[$1] += $2 }
 END {
   for (i in a) {
-    printf "%s %9s\n", i, a[i] | "sort -rnk2";
+    printf "%s %9s\n", i, a[i] | "sort -rnk1";
   }
 }
 ' results.csv
