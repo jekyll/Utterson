@@ -16,7 +16,7 @@ if [[ -n $REF ]]; then
 elif [[ -n $PR ]]; then
 	VERSION="#$PR"
 else
-	VERSION="unspecified"
+	VERSION="master"
 fi
 
 if command -v gtime; then
