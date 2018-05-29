@@ -1,6 +1,12 @@
 source "https://rubygems.org"
 
-gem "jekyll", git: "https://github.com/jekyll/jekyll", branch: "master"
+if ENV["REF"]
+  gem "jekyll", git: "https://github.com/jekyll/jekyll", ref: ENV["REF"]
+elsif ENV["PR"]
+  gem "jekyll", git: "https://github.com/jekyll/jekyll", ref: "refs/pull/#{ENV['PR']}/head"
+else
+  gem "jekyll", git: "https://github.com/jekyll/jekyll", branch: "master"
+end
 
 gem "jekyll-sass-converter"
 gem "kramdown"
