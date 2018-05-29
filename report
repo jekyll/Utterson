@@ -1,0 +1,11 @@
+#!/bin/sh
+
+awk -F',' '
+NR == 1 { next }
+{ a[$1] += $2 }
+END {
+  for (i in a) {
+    printf "%s %9s\n", i, a[i] | "sort -rnk2";
+  }
+}
+' results.csv
