@@ -25,6 +25,12 @@ else
 	TIME=$(which time)
 fi
 
+if command -v md5; then
+	MD5=$(which md5)
+else
+	MD5=$(which md5sum)
+fi
+
 # Create tmp/ directory
 TMPDIR="$(pwd)/sites"
 if [[ -d $TMPDIR ]]; then
@@ -34,7 +40,7 @@ mkdir -p "$TMPDIR/source"
 mkdir -p "$TMPDIR/destination"
 
 for SITE in $(cat "site-list"); do
-	SOURCE="$TMPDIR/source/$(md5 <<< $SITE)"
+	SOURCE="$TMPDIR/source/$($MD5 <<< $SITE)"
 	DESTINATION=${SOURCE/source/destination}
 	if [[ ! -d $SOURCE ]]; then
 		git clone --recurse-submodules -q "$SITE" "$SOURCE"
