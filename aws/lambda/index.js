@@ -11,7 +11,7 @@ var sqs = new AWS.SQS();
 exports.handler = function(event) {
     var params = {
         InstanceIds: [
-            "i-0b4808a603f0bbce2",
+            process.env["INSTANCE_ID"],
         ]
     };
     ec2.startInstances(params, function(err, data) {
