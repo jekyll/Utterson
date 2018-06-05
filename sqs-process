@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+# Builds a PR based on a message received from SQS
+
+QUEUE_URL="https://sqs.us-east-1.amazonaws.com/631571985519/utterson.fifo"
+
+JSON_RESPONSE=$(aws sqs receive-message --queue-url "$QUEUE_URL" --message-attribute-names All)
+
+read -d "###" -a BUILDS <<< $(jq -r '.Messages[0].MessageAttributes.base.StringValue,.Messages[0].MessageAttributes.pr.StringValue,.Messages[0].ReceiptHandle' <<< $JSON_RESPONSE)
+rm results.csv
+REF="${BUILDS[0]}" ./bench
+ PR="${BUILDS[1]}" ./bench
+./results
+
+aws sqs delete-message --receipt-handle "${BUILDS[2]}" --queue-url "$QUEUE_URL"
