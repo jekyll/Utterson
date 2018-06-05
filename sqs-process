@@ -7,15 +7,21 @@ QUEUE_URL="https://sqs.us-east-1.amazonaws.com/631571985519/utterson.fifo"
 
 JSON_RESPONSE=$(aws sqs receive-message --queue-url "$QUEUE_URL" --message-attribute-names All)
 
-read -d "###" -a BUILDS <<< $(jq -r '.Messages[0].MessageAttributes.base.StringValue,.Messages[0].MessageAttributes.pr.StringValue' <<< $JSON_RESPONSE)
-RECEIPT_HANDLE=$(jq -r '.Messages[0].ReceiptHandle' <<< $JSON_RESPONSE)
+            PR=$(jq -r '.Messages[0].MessageAttributes.pr.StringValue'   <<< $JSON_RESPONSE)
+          BASE=$(jq -r '.Messages[0].MessageAttributes.base.StringValue' <<< $JSON_RESPONSE)
+RECEIPT_HANDLE=$(jq -r '.Messages[0].ReceiptHandle'                      <<< $JSON_RESPONSE)
 
+# If there are already any previous results, delete them
 if [[ -f results.csv ]]; then
 	rm results.csv
 fi
 
-REF="${BUILDS[0]}" ./bench
- PR="${BUILDS[1]}" ./bench
+# Test the base branch, and the new PR
+REF="$BASE" ./bench
+ PR="$PR"   ./bench
+
+# Generate report based on tests
 ./report
 
+# If everything was successful, we can delete this message from SQS
 aws sqs delete-message --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL"
