@@ -9,6 +9,8 @@ var ec2 = new AWS.EC2();
 var sqs = new AWS.SQS();
 
 exports.handler = function(event) {
+    var pull_request = event["pull_request"];
+    
     var params = {
         InstanceIds: [
             process.env["INSTANCE_ID"],
@@ -21,17 +23,17 @@ exports.handler = function(event) {
     });
 
     var message = {
-        MessageBody: "New " + Date.now(),
+        MessageBody: "New " + pull_request["head"]["sha"],
         QueueUrl: process.env["QUEUE_URL"],
         MessageGroupId: "0",
         MessageAttributes: {
             "pr": {
                 DataType: "String",
-                StringValue: "7049"
+                StringValue: String(pull_request["number"])
             },
             "base": {
                 DataType: "String",
-                StringValue: "master"
+                StringValue: pull_request["base"]["ref"]
             },
         }
     }
