@@ -8,7 +8,7 @@ AWS.config.apiVersions = {
 var ec2 = new AWS.EC2();
 var sqs = new AWS.SQS();
 
-exports.handler = async function(event, context) {
+exports.handler = function(event, context) {
     try {
         var response = {
             "isBase64Encoded": false,
@@ -52,21 +52,18 @@ exports.handler = async function(event, context) {
             }
         }
 
-        await sqs.sendMessage(message, function(err, data) {
+        sqs.sendMessage(message, function(err, data) {
             if (err) {
                 console.log("Error", err);
-            }
-            else {
-                console.log("Success", data.MessageId);
             }
         });
 
-        await ec2.startInstances(params, function(err, data) {
+        ec2.startInstances(params, function(err, data) {
             if (err) {
                 console.log("Error", err);
             }
         });
-        
+
         console.log("Log message");
 
         context.succeed(response);
