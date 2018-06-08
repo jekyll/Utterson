@@ -62,11 +62,13 @@ exports.handler = function(event, context) {
             if (err) {
                 console.log("Error", err);
             }
+            else {
+                console.log("Success");
+                context.succeed(response);
+
+            }
         });
 
-        console.log("Log message");
-
-        context.succeed(response);
     }
     catch (err) {
         response.statusCode = 500;
