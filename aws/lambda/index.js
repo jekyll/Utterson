@@ -8,7 +8,7 @@ AWS.config.apiVersions = {
 var ec2 = new AWS.EC2();
 var sqs = new AWS.SQS();
 
-exports.handler = function(event, context) {
+exports.handler = async function(event, context) {
     try {
         var response = {
             "isBase64Encoded": false,
@@ -21,7 +21,7 @@ exports.handler = function(event, context) {
         if (typeof json === "string") {
             json = JSON.parse(json)
         }
-        
+
         var pull_request = json["pull_request"];
 
         var title = "New PR #" + pull_request["number"] +
@@ -35,11 +35,6 @@ exports.handler = function(event, context) {
                 process.env["INSTANCE_ID"],
             ]
         };
-        ec2.startInstances(params, function(err, data) {
-            if (err) {
-                console.log("Error", err);
-            }
-        });
 
         var message = {
             MessageBody: title,
@@ -56,7 +51,8 @@ exports.handler = function(event, context) {
                 },
             }
         }
-        sqs.sendMessage(message, function(err, data) {
+
+        await sqs.sendMessage(message, function(err, data) {
             if (err) {
                 console.log("Error", err);
             }
@@ -65,11 +61,19 @@ exports.handler = function(event, context) {
             }
         });
 
+        await ec2.startInstances(params, function(err, data) {
+            if (err) {
+                console.log("Error", err);
+            }
+        });
+        
+        console.log("Log message");
+
         context.succeed(response);
     }
     catch (err) {
         response.statusCode = 500;
-        response.body = err.message+"\n\n"+JSON.stringify(event.body);
+        response.body = err.message + "\n\n" + JSON.stringify(event.body);
         context.succeed(response);
     }
 };
