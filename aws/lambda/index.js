@@ -14,10 +14,21 @@ exports.handler = function(event, context) {
             "isBase64Encoded": false,
             "statusCode": 200,
             "headers": {},
-            "body": "ok"
+            "body": ""
         }
 
-        var pull_request = JSON.parse(event.body)["pull_request"];
+        var json = event.body;
+        if (typeof json === "string") {
+            json = JSON.parse(json)
+        }
+        
+        var pull_request = json["pull_request"];
+
+        var title = "New PR #" + pull_request["number"] +
+            "\nwith base " + pull_request["base"]["ref"] +
+            "\nand head " + pull_request["head"]["sha"];
+
+        response.body = title;
 
         var params = {
             InstanceIds: [
@@ -31,7 +42,7 @@ exports.handler = function(event, context) {
         });
 
         var message = {
-            MessageBody: "New " + pull_request["head"]["sha"],
+            MessageBody: title,
             QueueUrl: process.env["QUEUE_URL"],
             MessageGroupId: "0",
             MessageAttributes: {
@@ -58,7 +69,7 @@ exports.handler = function(event, context) {
     }
     catch (err) {
         response.statusCode = 500;
-        response.body = "fail";
+        response.body = err.message+"\n\n"+JSON.stringify(event.body);
         context.succeed(response);
     }
 };
