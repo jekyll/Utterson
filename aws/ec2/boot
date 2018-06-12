@@ -4,7 +4,8 @@
 . /etc/init.d/functions
 
 checkloop() {
-	while ( sudo -u ec2-user -Hi /home/ec2-user/Utterson/aws/sqs/process ); do
+	cd /home/ec2-user/Utterson
+	while ( sudo -u ec2-user -Hi -- /home/ec2-user/Utterson/aws/ec2/doCheck ); do
 		echo "Checking for more messages."
 	done
 	local USERS=$( who | wc -l )
