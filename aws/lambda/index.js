@@ -29,7 +29,7 @@ exports.handler = function(event, context) {
         }
 
         var pull_request;
-        if (json["action"] === "requested") {
+        if (json["action"] === "requested" || json["action"] === "rerequested") {
             pull_request = json["check_suite"]["pull_requests"][0];
         } else {
             pull_request = json["pull_request"];
