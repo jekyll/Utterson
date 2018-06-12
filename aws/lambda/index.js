@@ -60,6 +60,18 @@ exports.handler = function(event, context) {
                     DataType: "String",
                     StringValue: pull_request["base"]["ref"]
                 },
+                "base-sha": {
+                    DataType: "String",
+                    StringValue: pull_request["base"]["sha"]
+                },
+                "head": {
+                    DataType: "String",
+                    StringValue: pull_request["head"]["sha"]
+                },
+                "repo": {
+                    DataType: "String",
+                    StringValue: json["repository"]["ssh_url"]
+                },
             }
         };
 

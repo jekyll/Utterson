@@ -13,6 +13,7 @@ echo "JSON =\n$JSON_RESPONSE"
 
             PR=$(jq -r '.Messages[0].MessageAttributes.pr.StringValue'   <<< $JSON_RESPONSE)
           BASE=$(jq -r '.Messages[0].MessageAttributes.base.StringValue' <<< $JSON_RESPONSE)
+export    REPO=$(jq -r '.Messages[0].MessageAttributes.repo.StringValue' <<< $JSON_RESPONSE)
 RECEIPT_HANDLE=$(jq -r '.Messages[0].ReceiptHandle'                      <<< $JSON_RESPONSE)
 
 # If there are already any previous results, delete them

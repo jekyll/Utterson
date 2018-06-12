@@ -1,11 +1,13 @@
 source "https://rubygems.org"
 
+repo = ENV["REPO"] || "git@github.com:jekyll/jekyll.git"
+
 if ENV["REF"]
-  gem "jekyll", git: "https://github.com/jekyll/jekyll", ref: ENV["REF"]
+  gem "jekyll", git: repo, ref: ENV["REF"]
 elsif ENV["PR"]
-  gem "jekyll", git: "https://github.com/jekyll/jekyll", ref: "refs/pull/#{ENV['PR']}/head"
+  gem "jekyll", git: repo, ref: "refs/pull/#{ENV['PR']}/head"
 else
-  gem "jekyll", git: "https://github.com/jekyll/jekyll", branch: "master"
+  gem "jekyll", git: repo, branch: "master"
 end
 
 gem "jekyll-sass-converter"
