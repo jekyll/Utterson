@@ -11,7 +11,7 @@ checkloop() {
 	local USERS=$( who | wc -l )
 	if (( USERS < 2 )); then
 		wall "Shutting down."
-		shutdown -h now
+#		shutdown -h now
 	fi
 }
 
