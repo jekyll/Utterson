@@ -8,7 +8,9 @@ AWS.config.apiVersions = {
 var ec2 = new AWS.EC2();
 var sqs = new AWS.SQS();
 
-exports.handler = function(event, context) {
+exports.handler = async function(event, context) {
+    context.callbackWaitsForEmptyEventLoop = false;
+
     try {
         var response = {
             "isBase64Encoded": false,
@@ -88,23 +90,31 @@ exports.handler = function(event, context) {
             }
         };
 
-        sqs.sendMessage(message, function(err, data) {
-            if (err) {
-                console.log("Error", err);
-            }
+        await new Promise((resolve, reject) => {
+            sqs.sendMessage(message, function(err, data) {
+                if (err) {
+                    console.log("Error", err);
+                }
+                else {
+                    console.log("SQS Success");
+                }
+                resolve();
+            });
         });
 
-        ec2.startInstances(params, function(err, data) {
-            if (err) {
-                console.log("Error", err);
-            }
-            else {
-                console.log("Success");
-                context.succeed(response);
-
-            }
+        await new Promise((resolve, reject) => {
+            ec2.startInstances(params, function(err, data) {
+                if (err) {
+                    console.log("Error", err);
+                }
+                else {
+                    console.log("EC2 Success");
+                }
+                resolve();
+            });
         });
 
+        context.succeed(response);
     }
     catch (err) {
         response.statusCode = 500;
