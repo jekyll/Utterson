@@ -19,7 +19,13 @@ exports.handler = function(event, context) {
 
         var json = event.body;
         if (typeof json === "string") {
-            json = JSON.parse(json)
+            json = JSON.parse(json);
+        }
+
+        if (json["action"] === "created" || "zen" in json) {
+            response["body"] = "ok";
+            context.succeed(response);
+            return;
         }
 
         var pull_request = json["pull_request"];
