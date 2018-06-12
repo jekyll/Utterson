@@ -1,11 +1,13 @@
 #!/bin/sh
 
+echo "| ref                                      | build time in seconds |"
+echo "|------------------------------------------|----------------------:|"
 awk -F',' '
 NR == 1 { next }
 { a[$1] += $2 }
 END {
   for (i in a) {
-    printf "%8s %9.2f\n", i, a[i] | "sort -rnk1";
+    printf "| %40s | %21.2f |\n", i, a[i] | "sort -rnk1";
   }
 }
 ' results.csv
