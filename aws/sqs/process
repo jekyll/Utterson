@@ -12,9 +12,14 @@ fi
 echo "JSON =\n$JSON_RESPONSE"
 
             PR=$(jq -r '.Messages[0].MessageAttributes.pr.StringValue'   <<< $JSON_RESPONSE)
+           URL=$(jq -r '.Messages[0].MessageAttributes.url.StringValue'  <<< $JSON_RESPONSE)
           BASE=$(jq -r '.Messages[0].MessageAttributes.base.StringValue' <<< $JSON_RESPONSE)
+   HEAD_BRANCH=$(jq -r '.Messages[0].MessageAttributes["head-branch"]StringValue' <<< $JSON_RESPONSE)
+      HEAD_SHA=$(jq -r '.Messages[0].MessageAttributes.head.StringValue' <<< $JSON_RESPONSE)
 export    REPO=$(jq -r '.Messages[0].MessageAttributes.repo.StringValue' <<< $JSON_RESPONSE)
 RECEIPT_HANDLE=$(jq -r '.Messages[0].ReceiptHandle'                      <<< $JSON_RESPONSE)
+
+URL=$URL BRANCH=$HEAD HEAD=$HEAD_SHA ./github/checks/start
 
 # If there are already any previous results, delete them
 if [[ -f results.csv ]]; then
@@ -39,3 +44,5 @@ aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url
 
 # If everything was successful, we can delete this message from SQS
 aws sqs delete-message --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL"
+
+URL=$URL BRANCH=$HEAD HEAD=$HEAD_SHA ./github/checks/complete
