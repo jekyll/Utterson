@@ -68,9 +68,21 @@ exports.handler = function(event, context) {
                     DataType: "String",
                     StringValue: pull_request["head"]["sha"]
                 },
+                "head-branch": {
+                    DataType: "String",
+                    StringValue: pull_request["head"]["ref"]
+                },
                 "repo": {
                     DataType: "String",
                     StringValue: json["repository"]["ssh_url"]
+                },
+                "installation": {
+                    DataType: "String",
+                    StringValue: String(json["installation"]["id"])
+                },
+                "url": {
+                    DataType: "String",
+                    StringValue: pull_request["base"]["repo"]["url"]
                 },
             }
         };
