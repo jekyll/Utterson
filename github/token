@@ -1,6 +1,5 @@
 #!/bin/bash
 
-INSTALLATION="206940"
 JSON=$(curl -X POST -H "Authorization: Bearer $(./github/jwt)" -H "Accept: application/vnd.github.machine-man-preview+json" "https://api.github.com/installations/$INSTALLATION/access_tokens")
 TOKEN=$(jq -r '.token' <<< $JSON)
 
