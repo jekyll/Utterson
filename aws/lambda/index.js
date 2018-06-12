@@ -28,7 +28,12 @@ exports.handler = function(event, context) {
             return;
         }
 
-        var pull_request = json["pull_request"];
+        var pull_request;
+        if (json["action"] === "requested") {
+            pull_request = json["check_suite"]["pull_requests"][0];
+        } else {
+            pull_request = json["pull_request"];
+        }
 
         var title = "New PR #" + pull_request["number"] +
             "\nwith base " + pull_request["base"]["ref"] +
