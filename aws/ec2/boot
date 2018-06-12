@@ -5,6 +5,7 @@
 
 checkloop() {
 	cd /home/ec2-user/Utterson
+	git pull
 	while ( sudo -u ec2-user -Hi -- /home/ec2-user/Utterson/aws/ec2/doCheck ); do
 		echo "Checking for more messages."
 	done
