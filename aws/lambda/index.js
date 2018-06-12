@@ -74,7 +74,7 @@ exports.handler = function(event, context) {
                 },
                 "repo": {
                     DataType: "String",
-                    StringValue: json["repository"]["ssh_url"]
+                    StringValue: json["repository"]["clone_url"]
                 },
                 "installation": {
                     DataType: "String",
