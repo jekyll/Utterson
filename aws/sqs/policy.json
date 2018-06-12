@@ -1,0 +1,29 @@
+{
+  "Version": "2012-10-17",
+  "Id": "arn:aws:sqs:us-east-1:631571985519:utterson.fifo/SQSDefaultPolicy",
+  "Statement": [
+    {
+      "Sid": "Sid1528213389225",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::631571985519:user/Utterson"
+      },
+      "Action": [
+        "SQS:DeleteMessage",
+        "SQS:SendMessage",
+        "SQS:ReceiveMessage",
+        "SQS:ChangeMessageVisibility"
+      ],
+      "Resource": "arn:aws:sqs:us-east-1:631571985519:utterson.fifo"
+    },
+    {
+      "Sid": "Sid1528222156130",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::631571985519:role/service-role/utterson-lambda"
+      },
+      "Action": "SQS:SendMessage",
+      "Resource": "arn:aws:sqs:us-east-1:631571985519:utterson.fifo"
+    }
+  ]
+}
