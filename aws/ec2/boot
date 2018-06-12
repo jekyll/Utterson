@@ -7,10 +7,6 @@ checkloop() {
 	while ( sudo -u ec2-user -Hi /home/ec2-user/Utterson/aws/sqs/process ); do
 		echo "Checking for more messages."
 	done
-}
-
-start() {
-	checkloop
 	local USERS=$( who | wc -l )
 	if (( USERS < 2 )); then
 		wall "Shutting down."
@@ -18,7 +14,11 @@ start() {
 	fi
 }
 
-case "$1" in 
+start() {
+	checkloop &
+}
+
+case "$1" in
     start)
        start
        ;;
