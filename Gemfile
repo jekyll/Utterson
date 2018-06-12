@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-repo = ENV["REPO"] || "git@github.com:jekyll/jekyll.git"
+repo = ENV["REPO"] || "https://github.com/jekyll/jekyll.git"
 
 if ENV["REF"]
   gem "jekyll", git: repo, ref: ENV["REF"]
