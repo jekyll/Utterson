@@ -15,7 +15,7 @@ exports.handler = function(event, context) {
             "statusCode": 200,
             "headers": {},
             "body": ""
-        }
+        };
 
         var json = event.body;
         if (typeof json === "string") {
@@ -56,7 +56,7 @@ exports.handler = function(event, context) {
                     StringValue: pull_request["base"]["ref"]
                 },
             }
-        }
+        };
 
         sqs.sendMessage(message, function(err, data) {
             if (err) {
