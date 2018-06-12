@@ -6,7 +6,20 @@ REPORT="${REPORT//
 /\n}"
 TOKEN="$(./github/token)"
 
-JSON='{"name":"Performance Check", "head_branch":"'$BRANCH'", "head_sha":"'$HEAD'", "status":"completed", "conclusion":"success", "completed_at":"'$DATE'", "output":{"title":"Build Complete", "summary":"The build completed", "text":"'"$REPORT"'"}}'
+JSON='
+{
+	"name": "Performance Check",
+	"head_branch": "'$BRANCH'",
+	"head_sha": "'$HEAD'",
+	"status": "completed",
+	"conclusion": "success",
+	"completed_at": "'$DATE'",
+	"output": {
+		"title": "Build Complete",
+		"summary": "The build completed",
+		"text": "'"$REPORT"'"
+	}
+}'
 
 echo "$JSON"
 
