@@ -1,0 +1,6 @@
+#!/bin/bash
+
+DATE=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
+TOKEN="$(./github/token)"
+
+curl -i -H "Authorization: token $TOKEN" -H "Accept: application/vnd.github.antiope-preview+json" -d '{"name":"Performance Check", "head_branch":"'$BRANCH'", "head_sha":"'$HEAD'", "status":"in_progress", "started_at":"'$DATE'"}' "$URL/check-runs"
