@@ -12,8 +12,7 @@ results.each{ |row|
   summed_results[row[0]] += row[1]
 }
 
-summed_results.each { |k,v|
-  ref = k
-  ref = "`#{k}`" unless k.match(/\A(?:[0-9a-f]+|#\d+)\Z/)
-  puts "| %-40s | %21.2f |" % [ref,v]
+summed_results.each { |ref,time|
+  ref = "`#{ref}`" unless ref.match(/\A(?:[0-9a-f]+|#\d+)\Z/)
+  puts "| %-40s | %21.2f |" % [ref,time]
 }
