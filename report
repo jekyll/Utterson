@@ -1,13 +1,19 @@
-#!/bin/sh
+#!/usr/bin/env ruby
 
-echo "| ref                                      | build time in seconds |"
-echo "|------------------------------------------|----------------------:|"
-awk -F',' '
-NR == 1 { next }
-{ a[$1] += $2 }
-END {
-  for (i in a) {
-    printf "| %40s | %21.2f |\n", i, a[i] | "sort -rnk1";
-  }
+require 'csv'
+results = CSV.read 'results.csv', headers: true, converters: :numeric
+
+puts "| ref                                      | build time in seconds |"
+puts "|------------------------------------------|----------------------:|"
+
+summed_results = {}
+results.each{ |row|
+  summed_results[row[0]] = 0.0 unless summed_results.has_key?(row[0])
+  summed_results[row[0]] += row[1]
 }
-' results.csv
+
+summed_results.each { |k,v|
+  ref = k
+  ref = "`#{k}`" unless k.match(/\A(?:[0-9a-f]+|#\d+)\Z/)
+  puts "| %-40s | %21.2f |" % [ref,v]
+}
