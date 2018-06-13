@@ -4,7 +4,7 @@ require 'csv'
 results = CSV.table('results.csv')
 
 puts "| ref                                      | build time in seconds |"
-puts "|------------------------------------------|----------------------:|"
+puts "|:-----------------------------------------|----------------------:|"
 
 summed_results = {}
 results.each{ |row|
