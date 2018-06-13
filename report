@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'csv'
-results = CSV.read 'results.csv', headers: true, converters: :numeric
+results = CSV.table('results.csv')
 
 puts "| ref                                      | build time in seconds |"
 puts "|------------------------------------------|----------------------:|"
