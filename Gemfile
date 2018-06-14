@@ -54,3 +54,7 @@ gem "classifier-reborn" # DirtyF/frank.taillandier.me
 gem "redcarpet" # 18F/federalist-docs
 gem "uswds-jekyll" # 18F/federalist-docs
 gem "jekyll_pages_api_search", group: :jekyll_plugins # 18F/federalist-docs
+
+group :dev do
+  gem "rubocop", "~> 0.56.0"
+end
