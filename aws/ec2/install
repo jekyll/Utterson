@@ -10,6 +10,9 @@ gpg --batch --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A17031
 curl -sSL https://get.rvm.io | bash -s stable
 source ~/.rvm/scripts/rvm
 rvm install 2.4
+rvm use     2.4 --default
+# In order to use RVM outside of this script, the user will either need to
+# logout and login again, or run `source ~/.rvm/scripts/rvm` in the shell
 
 # Install Bundler
 gem install bundler
