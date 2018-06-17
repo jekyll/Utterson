@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# Allow installing Node.js
+curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+
 # Install dependencies with Yum
 sudo yum -y update
-sudo yum -y install git jq
+sudo yum -y install git jq nodejs
 
 # Install RVM
 gpg --batch --list-keys # Initialize ~/.gnupg/
