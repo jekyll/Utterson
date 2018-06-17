@@ -1,18 +1,19 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require 'csv'
-results = CSV.table('results.csv')
+require "csv"
+results = CSV.table("results.csv")
 
 puts "| ref                                      | build time in seconds |"
 puts "|:-----------------------------------------|----------------------:|"
 
 summed_results = {}
-results.each{ |row|
-  summed_results[row[0]] = 0.0 unless summed_results.has_key?(row[0])
+results.each do |row|
+  summed_results[row[0]] = 0.0 unless summed_results.key?(row[0])
   summed_results[row[0]] += row[1]
-}
+end
 
-summed_results.each { |ref,time|
-  ref = "`#{ref}`" unless ref.match(/\A(?:[0-9a-f]+|#\d+)\Z/)
-  puts "| %-40s | %21.2f |" % [ref,time]
-}
+summed_results.each do |ref, time|
+  ref = "`#{ref}`" unless ref =~ %r!\A(?:[0-9a-f]+|#\d+)\Z!
+  puts format("| %-40s | %21.2f |", ref, time)
+end
