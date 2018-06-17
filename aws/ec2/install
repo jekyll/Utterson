@@ -35,7 +35,7 @@ mkdir ~/rbspy
 pushd ~/rbspy
 curl -L https://github.com/rbspy/rbspy/releases/download/v0.2.10/rbspy-v0.2.10-x86_64-unknown-linux-musl.tar.gz > rbspy.tar.gz
 tar -xvzf rbspy.tar.gz
-sudo mv rbspy /usr/local/bin
+sudo mv rbspy /usr/bin/
 popd
 rm -rf ~/rbspy
 
