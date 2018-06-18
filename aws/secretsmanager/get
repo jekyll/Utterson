@@ -1,0 +1,3 @@
+#!/bin/sh
+
+aws secretsmanager get-secret-value --secret-id "$1" | jq -r '.SecretString'

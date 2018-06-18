@@ -8,7 +8,8 @@ require "openssl"
 require "uri"
 
 # Private key contents
-private_pem = File.read(ENV.fetch("HOME") + "/.ssh/github.pem")
+get_secret = File.expand_path("../aws/secretsmanager/get", __dir__)
+private_pem = `#{get_secret} GitHub`
 private_key = OpenSSL::PKey::RSA.new(private_pem)
 
 # Generate the JWT
