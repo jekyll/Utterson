@@ -1,6 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-JSON=$(curl -X POST -H "Authorization: Bearer $(./github/jwt)" -H "Accept: application/vnd.github.machine-man-preview+json" "https://api.github.com/installations/$INSTALLATION/access_tokens")
-TOKEN=$(jq -r '.token' <<< $JSON)
+require "json"
+require "net/http"
+require "uri"
 
-echo $TOKEN
+uri = URI("https://api.github.com/installations/#{ENV["INSTALLATION"]}/access_tokens")
+req = Net::HTTP::Post.new(uri)
+req["Authorization"] = "Bearer #{`./github/jwt`}"
+req["Accept"] = "application/vnd.github.machine-man-preview+json"
+
+http = Net::HTTP.new(uri.hostname, uri.port)
+http.use_ssl = (uri.scheme == "https")
+res = http.request(req)
+
+json = JSON.parse(res.body)
+
+puts json["token"]
