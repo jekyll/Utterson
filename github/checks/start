@@ -1,15 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-DATE=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
-TOKEN="$(./github/token)"
+require "json"
+require "net/http"
+require "uri"
+require "date"
 
-JSON='
-{
-	"name": "Performance Check",
-	"head_branch": "'$BRANCH'",
-	"head_sha": "'$HEAD'",
-	"status": "in_progress",
-	"started_at": "'$DATE'"
-}'
+token = File.expand_path("../token", __dir__)
 
-curl -i -H "Authorization: token $TOKEN" -H "Accept: application/vnd.github.antiope-preview+json" -d "$JSON" "$URL/check-runs"
+date = Time.now.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+json = JSON(
+  :name        => "Performance Check",
+  :status      => "in_progress",
+  :started_at  => date,
+  :head_branch => ENV["BRANCH"],
+  :head_sha    => ENV["HEAD"]
+)
+
+uri = URI("#{ENV["URL"]}/check-runs")
+req = Net::HTTP::Post.new(uri)
+req["Authorization"] = "token #{`#{token}`}"
+req["Accept"] = "application/vnd.github.antiope-preview+json"
+req.body = json
+
+http = Net::HTTP.new(uri.hostname, uri.port)
+http.use_ssl = (uri.scheme == "https")
+http.request(req)
