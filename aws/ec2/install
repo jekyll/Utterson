@@ -4,6 +4,9 @@ RUBY="2.4"
 
 cd ~/
 
+# Upgrade AWS-CLI
+sudo pip install --upgrade awscli
+
 # Allow installing Node.js
 curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
 
