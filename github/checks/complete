@@ -1,26 +1,36 @@
-#!/bin/bash
+#!/usr/bin/env ruby
+# frozen_string_literal: true
 
-DATE=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
-REPORT=$(./report)
-REPORT="${REPORT//
-/\n}"
-TOKEN="$(./github/token)"
+require "json"
+require "net/http"
+require "uri"
+require "date"
 
-JSON='
-{
-	"name": "Performance Check",
-	"head_branch": "'$BRANCH'",
-	"head_sha": "'$HEAD'",
-	"status": "completed",
-	"conclusion": "success",
-	"completed_at": "'$DATE'",
-	"output": {
-		"title": "Build Complete",
-		"summary": "The build completed",
-		"text": "'"$REPORT"'"
-	}
-}'
+token = File.expand_path("../token", __dir__)
+report = File.expand_path("../../report", __dir__)
 
-echo "$JSON"
+date = Time.now.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-curl -i -H "Authorization: token $TOKEN" -H "Accept: application/vnd.github.antiope-preview+json" -d "$JSON" "$URL/check-runs"
+json = JSON(
+  :name         => "Performance Check",
+  :status       => "completed",
+  :conclusion   => "success",
+  :completed_at => date,
+  :head_branch  => ENV["BRANCH"],
+  :head_sha     => ENV["HEAD"],
+  :output       => {
+    :title   => "Build Complete",
+    :summary => "The build completed",
+    :text    => `#{report}`,
+  }
+)
+
+uri = URI("#{ENV["URL"]}/check-runs")
+req = Net::HTTP::Post.new(uri)
+req["Authorization"] = "token #{`#{token}`}"
+req["Accept"] = "application/vnd.github.antiope-preview+json"
+req.body = json
+
+http = Net::HTTP.new(uri.hostname, uri.port)
+http.use_ssl = (uri.scheme == "https")
+http.request(req)
