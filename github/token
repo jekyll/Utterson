@@ -5,9 +5,11 @@ require "json"
 require "net/http"
 require "uri"
 
+jwt = File.expand_path("jwt", __dir__)
+
 uri = URI("https://api.github.com/installations/#{ENV["INSTALLATION"]}/access_tokens")
 req = Net::HTTP::Post.new(uri)
-req["Authorization"] = "Bearer #{`./github/jwt`}"
+req["Authorization"] = "Bearer #{`#{jwt}`}"
 req["Accept"] = "application/vnd.github.machine-man-preview+json"
 
 http = Net::HTTP.new(uri.hostname, uri.port)
