@@ -37,8 +37,10 @@ total build time with the command:
 Reports will show total build time for all sites using each tested version:
 
 ```text
-v3.8.2    287.54
-v3.7.3    317.74
-v3.6.2    295.49
-v3.5.2    297.94
+| ref                                      | build time in seconds |
+|:-----------------------------------------|----------------------:|
+| `v3.8.2`                                 |                287.54 |
+| `v3.7.3`                                 |                317.74 |
+| `v3.6.2`                                 |                295.49 |
+| `v3.5.2`                                 |                297.94 |
 ```
