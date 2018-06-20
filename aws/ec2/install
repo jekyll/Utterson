@@ -24,6 +24,9 @@ rvm use     "$RUBY" --default
 # Install Bundler
 gem install bundler
 
+# Install jwt
+gem install jwt
+
 # Download Utterson
 git clone https://github.com/jekyll/Utterson.git Utterson
 
