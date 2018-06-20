@@ -8,7 +8,7 @@ require "openssl"
 require "uri"
 
 # Private key contents
-private_pem = File.read(ENV["HOME"] + "/.ssh/github.pem")
+private_pem = File.read(ENV.fetch("HOME") + "/.ssh/github.pem")
 private_key = OpenSSL::PKey::RSA.new(private_pem)
 
 # Generate the JWT
@@ -23,7 +23,9 @@ payload = {
 
 jwt = JWT.encode(payload, private_key, "RS256")
 
-uri = URI("https://api.github.com/installations/#{ENV["INSTALLATION"]}/access_tokens")
+installation = ENV.fetch("INSTALLATION")
+
+uri = URI("https://api.github.com/installations/#{installation}/access_tokens")
 req = Net::HTTP::Post.new(uri)
 req["Authorization"] = "Bearer #{jwt}"
 req["Accept"] = "application/vnd.github.machine-man-preview+json"
