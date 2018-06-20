@@ -2,14 +2,30 @@
 # frozen_string_literal: true
 
 require "json"
+require "jwt" # https://rubygems.org/gems/jwt
 require "net/http"
+require "openssl"
 require "uri"
 
-jwt = File.expand_path("jwt", __dir__)
+# Private key contents
+private_pem = File.read(ENV["HOME"] + "/.ssh/github.pem")
+private_key = OpenSSL::PKey::RSA.new(private_pem)
+
+# Generate the JWT
+payload = {
+  # issued at time
+  :iat => Time.now.to_i,
+  # JWT expiration time (10 minute maximum)
+  :exp => Time.now.to_i + (10 * 60),
+  # GitHub App's identifier
+  :iss => 13_446,
+}
+
+jwt = JWT.encode(payload, private_key, "RS256")
 
 uri = URI("https://api.github.com/installations/#{ENV["INSTALLATION"]}/access_tokens")
 req = Net::HTTP::Post.new(uri)
-req["Authorization"] = "Bearer #{`#{jwt}`}"
+req["Authorization"] = "Bearer #{jwt}"
 req["Accept"] = "application/vnd.github.machine-man-preview+json"
 
 http = Net::HTTP.new(uri.hostname, uri.port)
