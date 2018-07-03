@@ -2,6 +2,15 @@
 set -e
 ulimit -t 1200
 
+function checkFailedBuild {
+  if [[ $? != 0 ]]; then
+    echo "Build failed"
+    exit 1
+  fi
+}
+
+trap checkFailedBuild Exit
+
 export BUNDLE_GEMFILE="$(pwd)/Gemfile"
 bundle update
 
