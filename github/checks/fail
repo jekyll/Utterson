@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "net/http"
+require "uri"
+require "date"
+
+token = File.expand_path("../token", __dir__)
+date = Time.now.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+json = JSON(
+  :name         => "Performance Check",
+  :status       => "completed",
+  :conclusion   => "failure",
+  :completed_at => date,
+  :head_branch  => ENV["BRANCH"],
+  :head_sha     => ENV["HEAD"]
+)
+
+uri = URI("#{ENV["URL"]}/check-runs")
+req = Net::HTTP::Post.new(uri)
+req["Authorization"] = "token #{`#{token}`}"
+req["Accept"] = "application/vnd.github.antiope-preview+json"
+req.body = json
+
+http = Net::HTTP.new(uri.hostname, uri.port)
+http.use_ssl = (uri.scheme == "https")
+http.request(req)
