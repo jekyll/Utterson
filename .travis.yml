@@ -14,5 +14,7 @@ before_install:
 before_script:
   - bundle update
 
-script:
-  - bundle exec rubocop -D
+matrix:
+  include:
+  - script: bundle exec rubocop -D
+  - script: ./bench
