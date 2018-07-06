@@ -48,6 +48,11 @@ fi
 mkdir -p "$TMPDIR/source"
 mkdir -p "$TMPDIR/destination"
 
+# Flush SASS cache
+if [[ -d "$(pwd)/.sass-cache" ]]; then
+	rm -rf "$(pwd)/.sass-cache"
+fi
+
 for SITE in $(cat "site-list"); do
 	SOURCE="$TMPDIR/source/$($MD5 <<< $SITE)"
 	DESTINATION=${SOURCE/source/destination}
