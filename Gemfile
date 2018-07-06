@@ -45,6 +45,9 @@ gem "jekyll-theme-slate"
 gem "jekyll-theme-tactile"
 gem "jekyll-theme-time-machine"
 
+gem "jekyll-extract-element" # CloudCannon/base-jekyll-template
+gem "jekyll-archives" # CloudCannon/base-jekyll-template
+
 gem "jekyll-include-cache" # DirtyF/frank.taillandier.me
 gem "jekyll-last-modified-at" # DirtyF/frank.taillandier.me
 gem "jekyll-tidy" # DirtyF/frank.taillandier.me
