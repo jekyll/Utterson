@@ -1,3 +1,23 @@
-#!/bin/sh
+#!/bin/bash
 
-aws secretsmanager get-secret-value --secret-id "$1" | jq -r '.SecretString'
+set -e
+
+trap checkSuccess Exit
+
+SECRET_ID=$1
+
+function checkSuccess {
+  if [[ $SECRET_ID == "" ]]; then
+    >&2 echo "Please specify a secret to get:"
+    >&2 echo "  $0 [secret ID]"
+    exit 1
+  elif (( $? )); then
+    >&2 echo "Could not get secret '$SECRET_ID'"
+    >&2 echo "Please make sure that the current user has 'secretsmanager:GetSecretValue' permission"
+    >&2 echo "  for the resource arn:aws:secretsmanager:*:*:secret:*"
+    exit 1
+  fi
+}
+
+JSON=`aws secretsmanager get-secret-value --secret-id "$SECRET_ID"`
+jq -r '.SecretString' <<< $JSON

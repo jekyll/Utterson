@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "English"
 require "json"
 require "jwt" # https://rubygems.org/gems/jwt
 require "net/http"
@@ -10,6 +11,7 @@ require "uri"
 # Private key contents
 get_secret = File.expand_path("../aws/secretsmanager/get", __dir__)
 private_pem = `#{get_secret} GitHub`
+exit unless $CHILD_STATUS.success?
 private_key = OpenSSL::PKey::RSA.new(private_pem)
 
 # Generate the JWT
