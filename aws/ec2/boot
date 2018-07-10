@@ -10,9 +10,9 @@ checkloop() {
 		echo "Checking for more messages."
 	done
 	local USERS=$( who | wc -l )
-	if (( USERS < 2 )); then
+	if (( USERS = 0 )); then
 		wall "Shutting down."
-#		shutdown -h now
+		shutdown -h now
 	fi
 }
 
