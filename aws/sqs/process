@@ -7,6 +7,7 @@ function reportFailure {
   if [[ $? != 0 ]]; then
     echo "Build Failure"
     URL=$URL BRANCH=$HEAD HEAD=$HEAD_SHA ./github/checks/fail
+    aws sqs delete-message --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL"
     exit
   fi
 }
