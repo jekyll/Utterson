@@ -20,7 +20,7 @@ json = JSON(
 
 uri = URI("#{ENV["URL"]}/check-runs")
 req = Net::HTTP::Post.new(uri)
-req["Authorization"] = "token #{`#{token}`}"
+req["Authorization"] = "token #{`#{token}`.chomp}"
 req["Accept"] = "application/vnd.github.antiope-preview+json"
 req.body = json
 
