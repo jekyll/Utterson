@@ -42,8 +42,6 @@ exports.handler = async function(event, context) {
             "\nwith base " + pull_request["base"]["ref"] +
             "\nand head " + pull_request["head"]["sha"];
 
-        response.body = title;
-
         var params = {
             InstanceIds: [
                 process.env["INSTANCE_ID"],
@@ -89,6 +87,7 @@ exports.handler = async function(event, context) {
                 },
             }
         };
+        response.body = JSON.stringify(message, null, 2);
 
         await new Promise((resolve, reject) => {
             sqs.sendMessage(message, function(err, data) {
