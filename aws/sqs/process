@@ -18,7 +18,7 @@ if [[ -z $JSON_RESPONSE ]]; then
 	exit 1
 fi
 
-echo "JSON =\n$JSON_RESPONSE"
+echo "JSON = $JSON_RESPONSE"
 
                  PR=$(jq -r '.Messages[0].MessageAttributes.pr.StringValue'             <<< $JSON_RESPONSE)
                 URL=$(jq -r '.Messages[0].MessageAttributes.url.StringValue'            <<< $JSON_RESPONSE)
