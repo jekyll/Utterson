@@ -36,13 +36,13 @@ if [[ -f results.csv ]]; then
 	rm results.csv
 fi
 
-# Test the base branch, and the new PR
+# Test the new PR, and the base branch
 # Before each build, we lock the message for 20 minutes + 10 seconds
 #   (our maximum allowed build time + a grace period)
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 1210
-REF="$BASE" ./bench || reportFailure
-aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 1210
  PR="$PR"   ./bench || reportFailure
+aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 1210
+REF="$BASE" ./bench || reportFailure
 
 # Now that we are done building, we only need to lock the message for long
 # enough to generate our report. If something fails, we want the message to
