@@ -115,10 +115,10 @@ exports.handler = async function(event, context) {
             return;
         }
 
-        const pull_request = pull_requests[0];
-
-        const message = enqueuePullRequest(pull_request, INSTALLATION);
-        response.body = JSON.stringify(message, null, 2);
+        for (pull_request in pull_requests) {
+            const message = enqueuePullRequest(pull_request, INSTALLATION);
+            response.body += JSON.stringify(message, null, 2) + "\n\n";
+        }
 
         await new Promise((resolve, reject) => {
             ec2.startInstances(PARAMS, function(err, data) {
