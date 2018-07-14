@@ -30,13 +30,21 @@ exports.handler = async function(event, context) {
             return;
         }
 
-        var pull_request;
-        if (json["action"] === "requested" || json["action"] === "rerequested") {
-            pull_request = json["check_suite"]["pull_requests"][0];
+        let pull_requests;
+        if ("pull_requests" in json) {
+            pull_requests = json["check_suite"]["pull_requests"];
+        }
+        else if ("pull_request" in json) {
+            pull_requests = [json["pull_request"]];
         }
         else {
-            pull_request = json["pull_request"];
+            response.statusCode = 500;
+            response.body = "No pull requests present";
+            context.succeed(response);
+            return;
         }
+
+        const pull_request = pull_requests[0];
 
         var title = "New PR #" + pull_request["number"] +
             "\nwith base " + pull_request["base"]["ref"] +
