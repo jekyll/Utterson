@@ -1,0 +1,15 @@
+#!/bin/bash
+# set -e
+
+# Generate the `docs/` site and upload to S3
+
+echo "Generating docs site"
+
+SOURCE="docs/"
+DESTINATION="sites/destination/docs"
+mkdir -p $DESTINATION
+
+bundle update
+bundle exec jekyll build -s $SOURCE -d $DESTINATION
+
+aws s3 cp --recursive $DESTINATION s3://$S3_BUCKET/
