@@ -12,4 +12,4 @@ mkdir -p $DESTINATION
 bundle update
 bundle exec jekyll build -s $SOURCE -d $DESTINATION
 
-aws s3 cp --recursive $DESTINATION s3://$S3_BUCKET/
+aws s3 cp --exclude "api/*" --recursive $DESTINATION s3://$S3_BUCKET/
