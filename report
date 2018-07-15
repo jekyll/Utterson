@@ -7,16 +7,17 @@ require "yaml"
 results = CSV.table("results.csv")
 
 if ENV.key?("REF") && ENV.key?("PR")
+  pretty_ref = ENV.fetch("REF")[0...7]
   frontmatter = {
     "PR"        => ENV.fetch("PR"),
-    "REF"       => ENV.fetch("REF"),
+    "REF"       => pretty_ref,
     "title"     => "Performance Check",
     "permalink" => "/#{ENV.fetch "REF"}.html",
   }
   puts <<~HEADER
     #{frontmatter.to_yaml}---
 
-    The following report was generated for PR ##{ENV.fetch "PR"}, on commit `#{ENV.fetch "REF"}`
+    The following report was generated for PR ##{ENV.fetch "PR"}, on commit `#{pretty_ref}`
 
   HEADER
 end
