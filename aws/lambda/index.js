@@ -8,6 +8,13 @@ AWS.config.apiVersions = {
 var ec2 = new AWS.EC2();
 var sqs = new AWS.SQS();
 
+const StringValue = function(str) {
+    return {
+        DataType: "String",
+        StringValue: String(str)
+    };
+}
+
 exports.handler = async function(event, context) {
     context.callbackWaitsForEmptyEventLoop = false;
 
@@ -53,38 +60,14 @@ exports.handler = async function(event, context) {
             QueueUrl: process.env["QUEUE_URL"],
             MessageGroupId: "0",
             MessageAttributes: {
-                "pr": {
-                    DataType: "String",
-                    StringValue: String(pull_request["number"])
-                },
-                "base": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["ref"]
-                },
-                "base-sha": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["sha"]
-                },
-                "head": {
-                    DataType: "String",
-                    StringValue: pull_request["head"]["sha"]
-                },
-                "head-branch": {
-                    DataType: "String",
-                    StringValue: pull_request["head"]["ref"]
-                },
-                "repo": {
-                    DataType: "String",
-                    StringValue: json["repository"]["clone_url"]
-                },
-                "installation": {
-                    DataType: "String",
-                    StringValue: String(json["installation"]["id"])
-                },
-                "url": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["repo"]["url"]
-                },
+                "pr": StringValue(pull_request["number"]),
+                "base": StringValue(pull_request["base"]["ref"]),
+                "base-sha": StringValue(pull_request["base"]["sha"]),
+                "head": StringValue(pull_request["head"]["sha"]),
+                "head-branch": StringValue(pull_request["head"]["ref"]),
+                "repo": StringValue(json["repository"]["clone_url"]),
+                "installation": StringValue(json["installation"]["id"]),
+                "url": StringValue(pull_request["base"]["repo"]["url"])
             }
         };
         response.body = JSON.stringify(message, null, 2);
