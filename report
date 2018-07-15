@@ -2,7 +2,24 @@
 # frozen_string_literal: true
 
 require "csv"
+require "yaml"
+
 results = CSV.table("results.csv")
+
+if ENV.key?("REF") && ENV.key?("PR")
+  frontmatter = {
+    "PR"        => ENV.fetch("PR"),
+    "REF"       => ENV.fetch("REF"),
+    "title"     => "Performance Check",
+    "permalink" => "/#{ENV.fetch "REF"}.html",
+  }
+  puts <<~HEADER
+    #{frontmatter.to_yaml}---
+
+    The following report was generated for PR ##{ENV.fetch "PR"}, on commit `#{ENV.fetch "REF"}`
+
+  HEADER
+end
 
 puts "| ref                                      | build time in seconds |"
 puts "|:-----------------------------------------|----------------------:|"
