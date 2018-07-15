@@ -50,7 +50,10 @@ REF="$BASE" ./bench || reportFailure
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 30
 
 # Generate report based on tests
-./report
+PR="$PR" REF="$BASE" ./report > "docs/$BASE.md"
+cat "docs/$BASE.md"
+./aws/s3/generate-and-upload-site
+rm "docs/$BASE.md"
 
 # If everything was successful, we can delete this message from SQS
 aws sqs delete-message --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL"
