@@ -8,6 +8,75 @@ AWS.config.apiVersions = {
 var ec2 = new AWS.EC2();
 var sqs = new AWS.SQS();
 
+const PARAMS = {
+    InstanceIds: [
+        process.env["INSTANCE_ID"],
+    ]
+};
+const QUEUE_URL = process.env["QUEUE_URL"];
+
+const enqueuePullRequest = function(pr, installation) {
+    const title = "New PR #" + pr["number"] +
+        "\nwith base " + pr["base"]["ref"] +
+        "\nand head " + pr["head"]["sha"];
+
+    const cloneUrl = pr["base"]["repo"]["url"].replace("https://api.github.com/repos", "https://github.com");
+
+    const message = {
+        MessageBody: title,
+        QueueUrl: QUEUE_URL,
+        MessageGroupId: "0",
+        MessageAttributes: {
+            "pr": {
+                DataType: "String",
+                StringValue: String(pr["number"])
+            },
+            "base": {
+                DataType: "String",
+                StringValue: pr["base"]["ref"]
+            },
+            "base-sha": {
+                DataType: "String",
+                StringValue: pr["base"]["sha"]
+            },
+            "head": {
+                DataType: "String",
+                StringValue: pr["head"]["sha"]
+            },
+            "head-branch": {
+                DataType: "String",
+                StringValue: pr["head"]["ref"]
+            },
+            "repo": {
+                DataType: "String",
+                StringValue: cloneUrl
+            },
+            "installation": {
+                DataType: "String",
+                StringValue: installation
+            },
+            "url": {
+                DataType: "String",
+                StringValue: pr["base"]["repo"]["url"]
+            },
+        }
+    };
+
+    await new Promise((resolve, reject) => {
+        sqs.sendMessage(message, function(err, data) {
+            if (err) {
+                console.log("Error", err);
+            }
+            else {
+                console.log("SQS Success");
+            }
+            resolve();
+        });
+    });
+
+    return message;
+}
+
 exports.handler = async function(event, context) {
     context.callbackWaitsForEmptyEventLoop = false;
 
@@ -30,79 +99,29 @@ exports.handler = async function(event, context) {
             return;
         }
 
-        var pull_request;
-        if (json["action"] === "requested" || json["action"] === "rerequested") {
-            pull_request = json["check_suite"]["pull_requests"][0];
+        const INSTALLATION = String(json["installation"]["id"]);
+
+        let pull_requests;
+        if ("pull_requests" in json) {
+            pull_requests = json["check_suite"]["pull_requests"];
+        }
+        else if ("pull_request" in json) {
+            pull_requests = [json["pull_request"]];
         }
         else {
-            pull_request = json["pull_request"];
+            response.statusCode = 500;
+            response.body = "No pull requests present";
+            context.succeed(response);
+            return;
         }
 
-        var title = "New PR #" + pull_request["number"] +
-            "\nwith base " + pull_request["base"]["ref"] +
-            "\nand head " + pull_request["head"]["sha"];
-
-        var params = {
-            InstanceIds: [
-                process.env["INSTANCE_ID"],
-            ]
-        };
-
-        var message = {
-            MessageBody: title,
-            QueueUrl: process.env["QUEUE_URL"],
-            MessageGroupId: "0",
-            MessageAttributes: {
-                "pr": {
-                    DataType: "String",
-                    StringValue: String(pull_request["number"])
-                },
-                "base": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["ref"]
-                },
-                "base-sha": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["sha"]
-                },
-                "head": {
-                    DataType: "String",
-                    StringValue: pull_request["head"]["sha"]
-                },
-                "head-branch": {
-                    DataType: "String",
-                    StringValue: pull_request["head"]["ref"]
-                },
-                "repo": {
-                    DataType: "String",
-                    StringValue: json["repository"]["clone_url"]
-                },
-                "installation": {
-                    DataType: "String",
-                    StringValue: String(json["installation"]["id"])
-                },
-                "url": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["repo"]["url"]
-                },
-            }
-        };
-        response.body = JSON.stringify(message, null, 2);
+        for (pull_request in pull_requests) {
+            const message = enqueuePullRequest(pull_request, INSTALLATION);
+            response.body += JSON.stringify(message, null, 2) + "\n\n";
+        }
 
         await new Promise((resolve, reject) => {
-            sqs.sendMessage(message, function(err, data) {
-                if (err) {
-                    console.log("Error", err);
-                }
-                else {
-                    console.log("SQS Success");
-                }
-                resolve();
-            });
-        });
-
-        await new Promise((resolve, reject) => {
-            ec2.startInstances(params, function(err, data) {
+            ec2.startInstances(PARAMS, function(err, data) {
                 if (err) {
                     console.log("Error", err);
                 }
