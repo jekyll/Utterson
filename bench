@@ -34,12 +34,6 @@ else
 	TIME=$(which time)
 fi
 
-if command -v md5; then
-	MD5=$(which md5)
-else
-	MD5=$(which md5sum)
-fi
-
 # Create tmp/ directory
 TMPDIR="$(pwd)/sites"
 if [[ -d $TMPDIR ]]; then
@@ -54,10 +48,8 @@ if [[ -d "$(pwd)/.sass-cache" ]]; then
 fi
 
 for SITE in $(cat "site-list"); do
-	SITE_MD5="$($MD5 <<< $SITE)"
 	echo ""
 	echo "Sampling: $SITE"
-	echo "SITE_MD5: $SITE_MD5"
 	echo ""
 	SOURCE="$TMPDIR/source/${SITE##*/}"
 	DESTINATION=${SOURCE/source/destination}
