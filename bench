@@ -54,7 +54,12 @@ if [[ -d "$(pwd)/.sass-cache" ]]; then
 fi
 
 for SITE in $(cat "site-list"); do
-	SOURCE="$TMPDIR/source/$($MD5 <<< $SITE)"
+	SITE_MD5="$($MD5 <<< $SITE)"
+	echo ""
+	echo "Sampling: $SITE"
+	echo "SITE_MD5: $SITE_MD5"
+	echo ""
+	SOURCE="$TMPDIR/source/${SITE##*/}"
 	DESTINATION=${SOURCE/source/destination}
 	if [[ ! -d $SOURCE ]]; then
 		git clone --recurse-submodules -q "$SITE" "$SOURCE"
