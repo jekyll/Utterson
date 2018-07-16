@@ -16,6 +16,7 @@ json = JSON(
   :status       => "completed",
   :conclusion   => "success",
   :completed_at => date,
+  :details_url  => "https://utterson.pathawks.com/#{ENV["HEAD"]}.html",
   :head_branch  => ENV["BRANCH"],
   :head_sha     => ENV["HEAD"],
   :output       => {
