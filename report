@@ -4,17 +4,18 @@
 require "csv"
 require "yaml"
 
-def linkify_pr(text, repo = "https://github.com/jekyll/jekyll")
+def linkify_pr(text, repo)
   "[##{text}](#{File.join(repo, "pull", text)})"
 end
 
-def linkify_sha(pretty_ref, full_ref, repo = "https://github.com/jekyll/jekyll")
+def linkify_sha(pretty_ref, full_ref, repo)
   "[`#{pretty_ref}`](#{File.join(repo, "commit", full_ref)})"
 end
 
 results = CSV.table("results.csv")
 
 if ENV.key?("REF") && ENV.key?("PR")
+  repo_url = ENV.fetch("URL")
   pretty_ref = ENV.fetch("REF")[0...7]
   frontmatter = {
     "PR"        => ENV.fetch("PR"),
@@ -25,8 +26,8 @@ if ENV.key?("REF") && ENV.key?("PR")
   puts <<~HEADER
     #{frontmatter.to_yaml}---
 
-    The following report was generated for
-    PR #{linkify_pr(frontmatter["PR"])}, on commit #{linkify_sha(pretty_ref, ENV.fetch("REF"))}
+    The following report was generated for PR #{linkify_pr(frontmatter["PR"], repo_url)},
+    on commit #{linkify_sha(pretty_ref, ENV.fetch("REF"), repo_url)}
 
   HEADER
 end
