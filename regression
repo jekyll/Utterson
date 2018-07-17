@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# After running `./bench` twice on different versions of Jekyll, this command
+# will diff the different builds of each site and complain if they are not
+# identical. This will help catch unintentional changes in Jekyll's behavior.
+
+set -e
+ulimit -t 1200
+
+function checkFailedBuild {
+  if [[ $? != 0 ]]; then
+    echo "Build failed"
+    exit 1
+  fi
+}
+
+trap checkFailedBuild Exit
+
+# Create tmp/ directory
+TMPDIR="$(pwd)/sites"
+if [[ -d $TMPDIR ]]; then
+	rm -rf "$TMPDIR"
+fi
+
+SUCCESS=0
+
+for SITE in $(cat "site-list"); do
+	echo ""
+	echo "Diffing: $SITE"
+	echo ""
+	SOURCE="$TMPDIR/$OLD/${SITE##*/}"
+	DESTINATION=${SOURCE/$OLD/$NEW}
+	diff -r $SOURCE $DESTINATION
+	if (( $? != 0 )); then
+		SUCCESS=1
+	fi
+done
+
+exit $SUCCESS
