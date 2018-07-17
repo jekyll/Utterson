@@ -36,9 +36,6 @@ fi
 
 # Create tmp/ directory
 TMPDIR="$(pwd)/sites"
-if [[ -d $TMPDIR ]]; then
-	rm -rf "$TMPDIR"
-fi
 mkdir -p "$TMPDIR/source"
 mkdir -p "$TMPDIR/destination"
 

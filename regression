@@ -18,9 +18,6 @@ trap checkFailedBuild Exit
 
 # Create tmp/ directory
 TMPDIR="$(pwd)/sites"
-if [[ -d $TMPDIR ]]; then
-	rm -rf "$TMPDIR"
-fi
 
 SUCCESS=0
 
@@ -30,7 +27,7 @@ for SITE in $(cat "site-list"); do
 	echo ""
 	SOURCE="$TMPDIR/$OLD/${SITE##*/}"
 	DESTINATION=${SOURCE/$OLD/$NEW}
-	diff -r $SOURCE $DESTINATION
+	diff -r "$SOURCE/" "$DESTINATION/"
 	if (( $? != 0 )); then
 		SUCCESS=1
 	fi
