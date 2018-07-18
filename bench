@@ -20,10 +20,10 @@ if [[ ! -s $RESULTS ]]; then
 	echo "Jekyll version, user time in seconds, site" > $RESULTS
 fi
 
-if [[ -n $REF ]]; then
-	VERSION=$REF
-elif [[ -n $PR ]]; then
+if [[ -n $PR ]]; then
 	VERSION="#$PR"
+elif [[ -n $REF ]]; then
+	VERSION=$REF
 else
 	VERSION="master"
 fi

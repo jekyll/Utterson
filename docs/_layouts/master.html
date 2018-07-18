@@ -1,21 +1,32 @@
----
----
 <!DOCTYPE HTML>
 <html lang="en-US">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic,900">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic,900">
   <link rel="stylesheet" href="https://jekyllrb.com/css/screen.css">
   <link rel="icon" type="image/x-icon" href="https://jekyllrb.com/favicon.ico">
   <title>{{ page.title | smartify }}</title>
+  <style>
+    header img { margin-top: -15px }
+    .wrap {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    .news {
+      display: flex;
+      flex: 1;
+      align-items: center;
+    }
+  </style>
 </head>
 <body class="wrap">
   <header role="banner">
   <nav class="mobile-nav show-on-mobiles">
     <ul>
       <li class="current">
-        <a href="{{ "" | absolute_url }}">Utterson</a>
+        <a href="{{ "/" | absolute_url }}">Utterson</a>
       </li>
       <li>
         <a href="https://jekyllrb.com/docs/home/">
@@ -26,23 +37,23 @@
         <a href="https://jekyllrb.com/help/"><span class="hide-on-mobiles">Getting </span>Help</a>
       </li>
       <li>
-        <a href="https://github.com/jekyll/jekyll"><span class="hide-on-mobiles">View on </span>GitHub</a>
+        <a href="https://github.com/jekyll/Utterson"><span class="hide-on-mobiles">View on </span>GitHub</a>
       </li>
     </ul>
   </nav>
-  <div class="grid">
-    <div class="unit one-third center-on-mobiles">
+  <div class="flexbox grid">
+    <div class="unit one-fifth center-on-mobiles">
       <h1>
         <a href="https://jekyllrb.com">
           <span class="sr-only">Jekyll</span>
-          <img src="https://jekyllrb.com/img/logo-2x.png" width="249" height="115" alt="Jekyll Logo">
+          <img src="https://jekyllrb.com/img/logo-2x.png" width="125" height="57" alt="Jekyll Logo">
         </a>
       </h1>
     </div>
-    <nav class="main-nav unit two-thirds hide-on-mobiles">
+    <nav class="main-nav unit four-fifths hide-on-mobiles">
       <ul>
         <li>
-          <a href="{{ "" | absolute_url }}">Utterson</a>
+          <a href="{{ "/" | absolute_url }}">Utterson</a>
         </li>
         <li>
           <a href="https://jekyllrb.com/docs/home/">
@@ -53,13 +64,13 @@
           <a href="https://jekyllrb.com/help/">Getting Help</a>
         </li>
         <li>
-          <a href="https://github.com/jekyll/jekyll"><span class="hide-on-mobiles">View on </span>GitHub</a>
+          <a href="https://github.com/jekyll/Utterson"><span class="hide-on-mobiles">View on </span>GitHub</a>
         </li>
       </ul>
     </nav>
   </div>
 </header>
-<section class="news">
+<main class="news">
   <div class="grid">
     <div class="unit whole">
       <article>
@@ -68,7 +79,7 @@
       </article>
     </div>
   </div>
-</section>
+</main>
 <footer role="contentinfo">
   <div class="grid">
     <div class="unit two-thirds center-on-mobiles">
