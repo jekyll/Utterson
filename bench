@@ -62,5 +62,8 @@ for SITE in $(cat "site-list"); do
 		"$TIME" -ao "$RESULTS" -f"$VERSION,%U,$SITE" \
 			bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION" --trace
 	done
-	sudo -E -- rbspy record -- bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION"
+
+	if [[ -n $FLAMEGRAPH ]]; then
+		rbspy record -- bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION"
+	fi
 done
