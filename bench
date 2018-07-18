@@ -36,9 +36,6 @@ fi
 
 # Create tmp/ directory
 TMPDIR="$(pwd)/sites"
-if [[ -d $TMPDIR ]]; then
-	rm -rf "$TMPDIR"
-fi
 mkdir -p "$TMPDIR/source"
 mkdir -p "$TMPDIR/destination"
 
@@ -47,12 +44,16 @@ if [[ -d "$(pwd)/.sass-cache" ]]; then
 	rm -rf "$(pwd)/.sass-cache"
 fi
 
+if [[ -z $DESTINATION_DIR ]]; then
+	DESTINATION_DIR="destination"
+fi
+
 for SITE in $(cat "site-list"); do
 	echo ""
 	echo "Sampling: $SITE"
 	echo ""
 	SOURCE="$TMPDIR/source/${SITE##*/}"
-	DESTINATION=${SOURCE/source/destination}
+	DESTINATION=${SOURCE/source/$DESTINATION_DIR}
 	if [[ ! -d $SOURCE ]]; then
 		git clone --recurse-submodules -q "$SITE" "$SOURCE"
 	fi
