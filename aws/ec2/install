@@ -12,17 +12,16 @@ curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
 
 # Install dependencies with Yum
 sudo yum -y update
-sudo yum -y install git jq nodejs
+sudo yum -y groupinstall "Development Tools"
+sudo yum -y install git jq nodejs openssl-devel readline-devel
 
-# Install RVM
-gpg --batch --list-keys # Initialize ~/.gnupg/
-gpg --batch --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-curl -sSL https://get.rvm.io | bash -s stable
-source .rvm/scripts/rvm
-rvm install "$RUBY"
-rvm use     "$RUBY" --default
-# In order to use RVM outside of this script, the user will either need to
-# logout and login again, or run `source ~/.rvm/scripts/rvm` in the shell
+# Install rbenv
+export PATH="$HOME/.rbenv/bin:$PATH"
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash
+rbenv install 2.5.1
+ruby global 2.5.1
+~/.rbenv/bin/rbenv init
 
 # Install Bundler
 gem install bundler
