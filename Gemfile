@@ -59,5 +59,5 @@ gem "uswds-jekyll" # 18F/federalist-docs
 gem "jekyll_pages_api_search", group: :jekyll_plugins # 18F/federalist-docs
 
 group :dev do
-  gem "rubocop", "~> 0.57.0"
+  gem "rubocop", "~> 0.58.1"
 end
