@@ -49,12 +49,18 @@ if [[ -d "$(pwd)/.sass-cache" ]]; then
 	rm -rf "$(pwd)/.sass-cache"
 fi
 
+# Create a directory for flamegraphs
+if [[ -n $FLAMEGRAPH ]]; then
+	mkdir -p "docs/$VERSION"
+fi
+
 for SITE in $(cat "site-list"); do
 	echo ""
 	echo "Sampling: $SITE"
 	echo ""
 	SOURCE="$TMPDIR/source/${SITE##*/}"
 	DESTINATION=${SOURCE/source/destination}
+	SVG_PATH="docs/$VERSION/${SITE##*/}"
 	if [[ ! -d $SOURCE ]]; then
 		git clone --recurse-submodules -q "$SITE" "$SOURCE"
 	fi
@@ -64,6 +70,7 @@ for SITE in $(cat "site-list"); do
 	done
 
 	if [[ -n $FLAMEGRAPH ]]; then
-		rbspy record -- bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION"
+		rbspy record --file "$SVG_PATH" -- bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION"
+		mv "$SVG_PATH" "$SVG_PATH.svg"
 	fi
 done
