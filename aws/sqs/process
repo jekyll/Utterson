@@ -44,9 +44,9 @@ fi
 # Before each build, we lock the message for 20 minutes + 10 seconds
 #   (our maximum allowed build time + a grace period)
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 1210
-PR="$PR"              REF="$HEAD_SHA" REPO="$HEAD_REPO" ./bench || reportFailure
+FLAMEGRAPH="true" PR="$PR" REF="$HEAD_SHA" REPO="$HEAD_REPO" ./bench || reportFailure
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 1210
-BRANCH="$BASE_BRANCH" REF="$BASE_SHA" REPO="$BASE_REPO" ./bench || reportFailure
+     BRANCH="$BASE_BRANCH" REF="$BASE_SHA" REPO="$BASE_REPO" ./bench || reportFailure
 
 # Now that we are done building, we only need to lock the message for long
 # enough to generate our report. If something fails, we want the message to
