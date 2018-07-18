@@ -51,7 +51,7 @@ fi
 
 # Create a directory for flamegraphs
 if [[ -n $FLAMEGRAPH ]]; then
-	mkdir -p "docs/$VERSION"
+	mkdir -p "docs/$REF"
 fi
 
 for SITE in $(cat "site-list"); do
@@ -60,7 +60,7 @@ for SITE in $(cat "site-list"); do
 	echo ""
 	SOURCE="$TMPDIR/source/${SITE##*/}"
 	DESTINATION=${SOURCE/source/destination}
-	SVG_PATH="docs/$VERSION/${SITE##*/}"
+	SVG_PATH="docs/$REF/${SITE##*/}"
 	if [[ ! -d $SOURCE ]]; then
 		git clone --recurse-submodules -q "$SITE" "$SOURCE"
 	fi
