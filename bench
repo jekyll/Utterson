@@ -22,8 +22,10 @@ fi
 
 if [[ -n $PR ]]; then
 	VERSION="#$PR"
+elif [[ -n $BRANCH ]]; then
+	VERSION="$BRANCH"
 elif [[ -n $REF ]]; then
-	VERSION=$REF
+	VERSION="$REF"
 else
 	VERSION="master"
 fi
