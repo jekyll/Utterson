@@ -77,10 +77,12 @@ exports.handler = async function(event, context) {
         if ("clone_url" in pull_request["base"]["repo"]) {
             message["MessageAttributes"]["base-repo"] = StringValue(pull_request["base"]["repo"]["clone_url"]);
             message["MessageAttributes"]["head-repo"] = StringValue(pull_request["head"]["repo"]["clone_url"]);
+            message["MessageAttributes"]["html_url"] = StringValue(pull_request["html_url"])
         }
         else {
             message["MessageAttributes"]["base-repo"] = StringValue(json["repository"]["clone_url"]);
             message["MessageAttributes"]["head-repo"] = StringValue(json["repository"]["clone_url"]);
+            message["MessageAttributes"]["html-url"] = StringValue(json["repository"]["html_url"])
         }
         response.body = JSON.stringify(message, null, 2);
 

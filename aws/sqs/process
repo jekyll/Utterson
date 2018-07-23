@@ -28,6 +28,7 @@ echo "JSON = $JSON_RESPONSE"
           HEAD_REPO=$(jq -r '.Messages[0].MessageAttributes["head-repo"].StringValue'   <<< $JSON_RESPONSE)
         BASE_BRANCH=$(jq -r '.Messages[0].MessageAttributes["base-branch"].StringValue' <<< $JSON_RESPONSE)
         HEAD_BRANCH=$(jq -r '.Messages[0].MessageAttributes["head-branch"].StringValue' <<< $JSON_RESPONSE)
+           HTML_URL=$(jq -r '.Messages[0].MessageAttributes["html-url"].StringValue'    <<< $JSON_RESPONSE)
 export INSTALLATION=$(jq -r '.Messages[0].MessageAttributes.installation.StringValue'   <<< $JSON_RESPONSE)
      RECEIPT_HANDLE=$(jq -r '.Messages[0].ReceiptHandle'                                <<< $JSON_RESPONSE)
 
@@ -53,7 +54,7 @@ aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 30
 
 # Generate report based on tests
-PR="$PR" REF="$HEAD_SHA" URL="$URL" ./report > "docs/$HEAD_SHA.md"
+PR="$PR" REF="$HEAD_SHA" HTML_URL="$HTML_URL" ./report > "docs/$HEAD_SHA.md"
 cat "docs/$HEAD_SHA.md"
 ./aws/s3/generate-and-upload-site
 rm "docs/$HEAD_SHA.md"

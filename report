@@ -8,29 +8,32 @@ def linkify_pr(text, repo)
   "[##{text}](#{File.join(repo, "pull", text)})"
 end
 
-def linkify_sha(pretty_ref, full_ref, repo)
-  "[`#{pretty_ref}`](#{File.join(repo, "commit", full_ref)})"
+def linkify_sha(ref, repo)
+  "[`#{ref[0...7]}`](#{File.join(repo, "commit", ref)})"
+end
+
+def markdown_header
+  repo_url = ENV.fetch("HTML_URL", "https://github.com/jekyll/jekyll")
+  ref = ENV["REF"]
+  pr = ENV["PR"]
+  frontmatter = {
+    "PR"        => pr,
+    "REF"       => ref,
+    "title"     => "Performance Check",
+    "permalink" => "/#{ref}.html",
+  }
+  <<~HEADER
+    #{frontmatter.to_yaml}---
+
+    The following report was generated for PR #{linkify_pr(pr, repo_url)},
+    on commit #{linkify_sha(ref, repo_url)}
+
+  HEADER
 end
 
 results = CSV.table("results.csv")
 
-if ENV.key?("REF") && ENV.key?("PR")
-  repo_url = ENV.fetch("URL")
-  pretty_ref = ENV.fetch("REF")[0...7]
-  frontmatter = {
-    "PR"        => ENV.fetch("PR"),
-    "REF"       => pretty_ref,
-    "title"     => "Performance Check",
-    "permalink" => "/#{ENV.fetch "REF"}.html",
-  }
-  puts <<~HEADER
-    #{frontmatter.to_yaml}---
-
-    The following report was generated for PR #{linkify_pr(frontmatter["PR"], repo_url)},
-    on commit #{linkify_sha(pretty_ref, ENV.fetch("REF"), repo_url)}
-
-  HEADER
-end
+puts markdown_header if ENV.key?("REF") && ENV.key?("PR")
 
 puts "| ref                                      | build time in seconds |"
 puts "|:-----------------------------------------|----------------------:|"
