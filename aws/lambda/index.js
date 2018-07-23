@@ -68,13 +68,20 @@ exports.handler = async function(event, context) {
                 "base-branch": StringValue(pull_request["base"]["ref"]),
                 "base-sha": StringValue(pull_request["base"]["sha"]),
                 "head-branch": StringValue(pull_request["head"]["ref"]),
-                "head-repo": StringValue(json["repository"]["clone_url"]),
                 "head-sha": StringValue(pull_request["head"]["sha"]),
                 "installation": StringValue(json["installation"]["id"]),
                 "pr": StringValue(pull_request["number"]),
                 "url": StringValue(pull_request["base"]["repo"]["url"])
             }
         };
+        if ("clone_url" in pull_request["base"]["repo"]) {
+            message["MessageAttributes"]["base-repo"] = StringValue(pull_request["base"]["repo"]["clone_url"]);
+            message["MessageAttributes"]["head-repo"] = StringValue(pull_request["head"]["repo"]["clone_url"]);
+        }
+        else {
+            message["MessageAttributes"]["base-repo"] = StringValue(json["repository"]["clone_url"]);
+            message["MessageAttributes"]["head-repo"] = StringValue(json["repository"]["clone_url"]);
+        }
         response.body = JSON.stringify(message, null, 2);
 
         await new Promise((resolve, reject) => {
