@@ -31,6 +31,7 @@ echo "JSON = $JSON_RESPONSE"
 export INSTALLATION=$(jq -r '.Messages[0].MessageAttributes.installation.StringValue'   <<< $JSON_RESPONSE)
      RECEIPT_HANDLE=$(jq -r '.Messages[0].ReceiptHandle'                                <<< $JSON_RESPONSE)
 
+export STARTED_AT=$(date -u "+%Y-%m-%dT%H:%M:%SZ")
 URL=$URL HEAD_BRANCH=$HEAD_BRANCH HEAD_SHA=$HEAD_SHA ./github/checks/start
 
 # If there are already any previous results, delete them

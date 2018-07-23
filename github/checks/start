@@ -13,7 +13,7 @@ date = Time.now.strftime("%Y-%m-%dT%H:%M:%SZ")
 json = JSON(
   :name        => "Performance Check",
   :status      => "in_progress",
-  :started_at  => date,
+  :started_at  => ENV.fetch("STARTED_AT", date),
   :head_branch => ENV["HEAD_BRANCH"],
   :head_sha    => ENV["HEAD_SHA"]
 )

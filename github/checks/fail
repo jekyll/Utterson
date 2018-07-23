@@ -14,6 +14,7 @@ json = JSON(
   :status       => "completed",
   :conclusion   => "failure",
   :completed_at => date,
+  :started_at   => ENV.fetch("STARTED_AT", date),
   :head_branch  => ENV["HEAD_BRANCH"],
   :head_sha     => ENV["HEAD_SHA"]
 )
