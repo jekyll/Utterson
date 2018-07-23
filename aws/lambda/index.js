@@ -39,6 +39,11 @@ exports.handler = async function(event, context) {
 
         var pull_request;
         if (json["action"] === "requested" || json["action"] === "rerequested") {
+            if (json["check_suite"]["pull_requests"].length === 0) {
+                response["body"] = "No pull requests in request";
+                context.succeed(response);
+                return;
+            }
             pull_request = json["check_suite"]["pull_requests"][0];
         }
         else {
