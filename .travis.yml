@@ -16,5 +16,7 @@ before_script:
 
 matrix:
   include:
-  - script: bundle exec rubocop -D
-  - script: ./bench
+  - name: Rubocop
+    script: bundle exec rubocop -D
+  - name: bench
+    script: ./bench
