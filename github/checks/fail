@@ -14,8 +14,8 @@ json = JSON(
   :status       => "completed",
   :conclusion   => "failure",
   :completed_at => date,
-  :head_branch  => ENV["BRANCH"],
-  :head_sha     => ENV["HEAD"]
+  :head_branch  => ENV["HEAD_BRANCH"],
+  :head_sha     => ENV["HEAD_SHA"]
 )
 
 uri = URI("#{ENV["URL"]}/check-runs")

@@ -65,13 +65,13 @@ exports.handler = async function(event, context) {
             QueueUrl: process.env["QUEUE_URL"],
             MessageGroupId: "0",
             MessageAttributes: {
-                "pr": StringValue(pull_request["number"]),
-                "base": StringValue(pull_request["base"]["ref"]),
+                "base-branch": StringValue(pull_request["base"]["ref"]),
                 "base-sha": StringValue(pull_request["base"]["sha"]),
-                "head": StringValue(pull_request["head"]["sha"]),
                 "head-branch": StringValue(pull_request["head"]["ref"]),
-                "repo": StringValue(json["repository"]["clone_url"]),
+                "head-repo": StringValue(json["repository"]["clone_url"]),
+                "head-sha": StringValue(pull_request["head"]["sha"]),
                 "installation": StringValue(json["installation"]["id"]),
+                "pr": StringValue(pull_request["number"]),
                 "url": StringValue(pull_request["base"]["repo"]["url"])
             }
         };

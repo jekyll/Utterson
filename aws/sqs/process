@@ -6,7 +6,7 @@
 function reportFailure {
   if [[ $? != 0 ]]; then
     echo "Build Failure"
-    URL=$URL BRANCH=$HEAD HEAD=$HEAD_SHA ./github/checks/fail
+    URL=$URL HEAD_BRANCH=$HEAD_BRANCH HEAD_SHA=$HEAD_SHA ./github/checks/fail
     aws sqs delete-message --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL"
     exit
   fi
@@ -22,14 +22,16 @@ echo "JSON = $JSON_RESPONSE"
 
                  PR=$(jq -r '.Messages[0].MessageAttributes.pr.StringValue'             <<< $JSON_RESPONSE)
                 URL=$(jq -r '.Messages[0].MessageAttributes.url.StringValue'            <<< $JSON_RESPONSE)
-               BASE=$(jq -r '.Messages[0].MessageAttributes.base.StringValue'           <<< $JSON_RESPONSE)
+           BASE_SHA=$(jq -r '.Messages[0].MessageAttributes["base-sha"].StringValue'    <<< $JSON_RESPONSE)
+           HEAD_SHA=$(jq -r '.Messages[0].MessageAttributes["head-sha"].StringValue'    <<< $JSON_RESPONSE)
+          BASE_REPO=$(jq -r '.Messages[0].MessageAttributes["head-repo"].StringValue'   <<< $JSON_RESPONSE)
+          HEAD_REPO=$(jq -r '.Messages[0].MessageAttributes["head-repo"].StringValue'   <<< $JSON_RESPONSE)
+        BASE_BRANCH=$(jq -r '.Messages[0].MessageAttributes["base-branch"].StringValue' <<< $JSON_RESPONSE)
         HEAD_BRANCH=$(jq -r '.Messages[0].MessageAttributes["head-branch"].StringValue' <<< $JSON_RESPONSE)
-           HEAD_SHA=$(jq -r '.Messages[0].MessageAttributes.head.StringValue'           <<< $JSON_RESPONSE)
 export INSTALLATION=$(jq -r '.Messages[0].MessageAttributes.installation.StringValue'   <<< $JSON_RESPONSE)
-export         REPO=$(jq -r '.Messages[0].MessageAttributes.repo.StringValue'           <<< $JSON_RESPONSE)
      RECEIPT_HANDLE=$(jq -r '.Messages[0].ReceiptHandle'                                <<< $JSON_RESPONSE)
 
-URL=$URL BRANCH=$HEAD HEAD=$HEAD_SHA ./github/checks/start
+URL=$URL HEAD_BRANCH=$HEAD_BRANCH HEAD_SHA=$HEAD_SHA ./github/checks/start
 
 # If there are already any previous results, delete them
 if [[ -f results.csv ]]; then
@@ -40,9 +42,9 @@ fi
 # Before each build, we lock the message for 20 minutes + 10 seconds
 #   (our maximum allowed build time + a grace period)
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 1210
- PR="$PR"   ./bench || reportFailure
+PR="$PR" REF="$HEAD_SHA" REPO="$HEAD_REPO" ./bench || reportFailure
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 1210
-REF="$BASE" ./bench || reportFailure
+         REF="$BASE_SHA" REPO="$BASE_REPO" ./bench || reportFailure
 
 # Now that we are done building, we only need to lock the message for long
 # enough to generate our report. If something fails, we want the message to
@@ -50,12 +52,12 @@ REF="$BASE" ./bench || reportFailure
 aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL" --visibility-timeout 30
 
 # Generate report based on tests
-PR="$PR" REF="$HEAD_SHA" ./report > "docs/$BASE.md"
-cat "docs/$BASE.md"
+PR="$PR" REF="$HEAD_SHA" URL="$URL" ./report > "docs/$HEAD_SHA.md"
+cat "docs/$HEAD_SHA.md"
 ./aws/s3/generate-and-upload-site
-rm "docs/$BASE.md"
+rm "docs/$HEAD_SHA.md"
 
 # If everything was successful, we can delete this message from SQS
 aws sqs delete-message --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL"
 
-URL=$URL BRANCH=$HEAD HEAD=$HEAD_SHA ./github/checks/complete
+URL=$URL HEAD_BRANCH=$HEAD_BRANCH HEAD_SHA=$HEAD_SHA ./github/checks/complete
