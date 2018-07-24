@@ -68,6 +68,6 @@ if ENV.key?("REF") && ENV.key?("PR")
     |--|:-----|----------------------------:|
   HEADER
   site_results.values.each do |data|
-    puts "| #{data.join(" | ")} |"
+    puts format "| %s | %s | %.2f |", data[0], data[1], data[2]
   end
 end
