@@ -64,8 +64,10 @@ end
 if ENV.key?("REF") && ENV.key?("PR")
   puts <<~HEADER
 
-    |  | site | total build time in seconds |
-    |--|:-----|----------------------------:|
+    Below is a table with the total build time for each site (summed total of all builds against this commit)
+
+    |  | site | build time in seconds |
+    |--|:-----|----------------------:|
   HEADER
   site_results.values.each do |data|
     puts format "| %s | %s | %.2f |", data[0], data[1], data[2]
