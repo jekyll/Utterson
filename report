@@ -13,12 +13,11 @@ def linkify_sha(ref, repo)
 end
 
 def linkify_flamegraph(site)
-  site = site.split("/").last
-  "[&#x1f525;&#xfe0f;](https://utterson.pathawks.com/#{ENV["REF"]}/#{site}.svg)"
+  "[&#x1f525;&#xfe0f;](https://utterson.pathawks.com/#{ENV["REF"]}/#{File.basename(site)}.svg)"
 end
 
 def linkify_site(site)
-  "[#{site.split("/").last}](#{site})"
+  "[#{File.basename(site)}](#{site})"
 end
 
 def markdown_header
