@@ -40,7 +40,15 @@ def markdown_header
   HEADER
 end
 
-results = CSV.table("results.csv")
+begin
+  results = CSV.table("results.csv")
+rescue Errno::ENOENT
+  puts <<~MSG
+    Cannot open file results.csv
+    You must run ./bench before running ./report
+  MSG
+  exit 1
+end
 
 puts markdown_header if ENV.key?("REF") && ENV.key?("PR")
 
