@@ -51,9 +51,13 @@ summed_results = {}
 site_results = {}
 results.each do |row|
   summed_results[row[0]] = 0.0 unless summed_results.key?(row[0])
-  site_results[row[2]] ||= [linkify_flamegraph(row[2]), linkify_site(row[2]), 0.0]
+  site_results[row[2]] ||= {
+    :flamegraph => linkify_flamegraph(row[2]),
+    :site       => linkify_site(row[2]),
+    :time       => 0.0,
+  }
   summed_results[row[0]] += row[1]
-  site_results[row[2]][2] += row[1] if row[0] == "##{ENV["PR"]}"
+  site_results[row[2]][:time] += row[1] if row[0] == "##{ENV["PR"]}"
 end
 
 summed_results.each do |ref, time|
@@ -70,6 +74,6 @@ if ENV.key?("REF") && ENV.key?("PR")
     |--|:-----|----------------------:|
   HEADER
   site_results.values.each do |data|
-    puts format "| %s | %s | %.2f |", data[0], data[1], data[2]
+    puts format "| %<flamegraph>s | %<site>s | %<time>.2f |", data
   end
 end
