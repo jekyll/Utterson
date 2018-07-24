@@ -8,6 +8,13 @@ AWS.config.apiVersions = {
 var ec2 = new AWS.EC2();
 var sqs = new AWS.SQS();
 
+const StringValue = function(str) {
+    return {
+        DataType: "String",
+        StringValue: String(str)
+    };
+}
+
 exports.handler = async function(event, context) {
     context.callbackWaitsForEmptyEventLoop = false;
 
@@ -32,6 +39,11 @@ exports.handler = async function(event, context) {
 
         var pull_request;
         if (json["action"] === "requested" || json["action"] === "rerequested") {
+            if (json["check_suite"]["pull_requests"].length === 0) {
+                response["body"] = "No pull requests in request";
+                context.succeed(response);
+                return;
+            }
             pull_request = json["check_suite"]["pull_requests"][0];
         }
         else {
@@ -53,40 +65,25 @@ exports.handler = async function(event, context) {
             QueueUrl: process.env["QUEUE_URL"],
             MessageGroupId: "0",
             MessageAttributes: {
-                "pr": {
-                    DataType: "String",
-                    StringValue: String(pull_request["number"])
-                },
-                "base": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["ref"]
-                },
-                "base-sha": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["sha"]
-                },
-                "head": {
-                    DataType: "String",
-                    StringValue: pull_request["head"]["sha"]
-                },
-                "head-branch": {
-                    DataType: "String",
-                    StringValue: pull_request["head"]["ref"]
-                },
-                "repo": {
-                    DataType: "String",
-                    StringValue: json["repository"]["clone_url"]
-                },
-                "installation": {
-                    DataType: "String",
-                    StringValue: String(json["installation"]["id"])
-                },
-                "url": {
-                    DataType: "String",
-                    StringValue: pull_request["base"]["repo"]["url"]
-                },
+                "base-branch": StringValue(pull_request["base"]["ref"]),
+                "base-sha": StringValue(pull_request["base"]["sha"]),
+                "head-branch": StringValue(pull_request["head"]["ref"]),
+                "head-sha": StringValue(pull_request["head"]["sha"]),
+                "installation": StringValue(json["installation"]["id"]),
+                "pr": StringValue(pull_request["number"]),
+                "url": StringValue(pull_request["base"]["repo"]["url"])
             }
         };
+        if ("clone_url" in pull_request["base"]["repo"]) {
+            message["MessageAttributes"]["base-repo"] = StringValue(pull_request["base"]["repo"]["clone_url"]);
+            message["MessageAttributes"]["head-repo"] = StringValue(pull_request["head"]["repo"]["clone_url"]);
+            message["MessageAttributes"]["html-url"] = StringValue(pull_request["html_url"].replace(/\/pull\/\d+/, ''));
+        }
+        else {
+            message["MessageAttributes"]["base-repo"] = StringValue(json["repository"]["clone_url"]);
+            message["MessageAttributes"]["head-repo"] = StringValue(json["repository"]["clone_url"]);
+            message["MessageAttributes"]["html-url"] = StringValue(json["repository"]["html_url"]);
+        }
         response.body = JSON.stringify(message, null, 2);
 
         await new Promise((resolve, reject) => {
