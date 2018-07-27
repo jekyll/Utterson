@@ -2,12 +2,9 @@
 # frozen_string_literal: true
 
 require "English"
-require "json"
 require "jwt" # https://rubygems.org/gems/jwt
-require "net/http"
 require "octokit"
 require "openssl"
-require "uri"
 
 # Private key contents
 get_secret = File.expand_path("../aws/secretsmanager/get", __dir__)
@@ -25,8 +22,9 @@ payload = {
   :iss => 13_446,
 }
 
-jwt    = JWT.encode(payload, private_key, "RS256")
+jwt = JWT.encode(payload, private_key, "RS256")
 client = Octokit::Client.new(:bearer_token => jwt)
-token  = client.create_installation_access_token(ENV.fetch("INSTALLATION"))[:token]
+installation = ENV.fetch("INSTALLATION")
+token = client.create_installation_access_token(installation)[:token]
 
 puts token
