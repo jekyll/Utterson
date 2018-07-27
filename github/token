@@ -2,11 +2,9 @@
 # frozen_string_literal: true
 
 require "English"
-require "json"
 require "jwt" # https://rubygems.org/gems/jwt
-require "net/http"
+require "octokit"
 require "openssl"
-require "uri"
 
 # Private key contents
 get_secret = File.expand_path("../aws/secretsmanager/get", __dir__)
@@ -25,18 +23,8 @@ payload = {
 }
 
 jwt = JWT.encode(payload, private_key, "RS256")
-
+client = Octokit::Client.new(:bearer_token => jwt)
 installation = ENV.fetch("INSTALLATION")
+token = client.create_installation_access_token(installation)[:token]
 
-uri = URI("https://api.github.com/installations/#{installation}/access_tokens")
-req = Net::HTTP::Post.new(uri)
-req["Authorization"] = "Bearer #{jwt}"
-req["Accept"] = "application/vnd.github.machine-man-preview+json"
-
-http = Net::HTTP.new(uri.hostname, uri.port)
-http.use_ssl = (uri.scheme == "https")
-res = http.request(req)
-
-json = JSON.parse(res.body)
-
-puts json["token"]
+puts token
