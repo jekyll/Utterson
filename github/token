@@ -5,6 +5,7 @@ require "English"
 require "json"
 require "jwt" # https://rubygems.org/gems/jwt
 require "net/http"
+require "octokit"
 require "openssl"
 require "uri"
 
@@ -24,19 +25,8 @@ payload = {
   :iss => 13_446,
 }
 
-jwt = JWT.encode(payload, private_key, "RS256")
+jwt    = JWT.encode(payload, private_key, "RS256")
+client = Octokit::Client.new(:bearer_token => jwt)
+token  = client.create_installation_access_token(ENV.fetch("INSTALLATION"))[:token]
 
-installation = ENV.fetch("INSTALLATION")
-
-uri = URI("https://api.github.com/installations/#{installation}/access_tokens")
-req = Net::HTTP::Post.new(uri)
-req["Authorization"] = "Bearer #{jwt}"
-req["Accept"] = "application/vnd.github.machine-man-preview+json"
-
-http = Net::HTTP.new(uri.hostname, uri.port)
-http.use_ssl = (uri.scheme == "https")
-res = http.request(req)
-
-json = JSON.parse(res.body)
-
-puts json["token"]
+puts token
