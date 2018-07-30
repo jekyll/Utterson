@@ -32,7 +32,7 @@ module Octokit
     # https://developer.github.com/v3/checks/runs/#create-a-check-run
     # -----------------------------------------------------------------------------------
     def create_check_run(repo, options)
-      post "#{Repository.path repo}/check-runs", options.merge(PREVIEW_HEADER)
+      post "#{Repository.path(repo)}/check-runs", options.merge(PREVIEW_HEADER)
     end
 
     # Update an existing check run
@@ -48,7 +48,7 @@ module Octokit
     # https://developer.github.com/v3/checks/runs/#update-a-check-run
     # -----------------------------------------------------------------------------------
     def update_check_run(repo, id, options)
-      patch "#{Repository.path repo}/check-runs/#{id}", options.merge(PREVIEW_HEADER)
+      patch "#{Repository.path(repo)}/check-runs/#{id}", options.merge(PREVIEW_HEADER)
     end
   end
 end
