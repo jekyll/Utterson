@@ -15,6 +15,8 @@ const StringValue = function(str) {
     };
 }
 
+const AllowedActions = ["synchronize", "opened"];
+
 exports.handler = async function(event, context) {
     context.callbackWaitsForEmptyEventLoop = false;
 
@@ -32,23 +34,19 @@ exports.handler = async function(event, context) {
         }
 
         if (json["action"] === "created" || "zen" in json) {
-            response["body"] = "ok";
+            response["statusCode"] = 204;
             context.succeed(response);
             return;
         }
 
         var pull_request;
-        if (json["action"] === "requested" || json["action"] === "rerequested") {
-            if (json["check_suite"]["pull_requests"].length === 0) {
-                response["body"] = "No pull requests in request";
-                context.succeed(response);
-                return;
-            }
-            pull_request = json["check_suite"]["pull_requests"][0];
+        if (!AllowedActions.includes(json["action"])) {
+            response["statusCode"] = 204;
+            context.succeed(response);
+            return;
         }
-        else {
-            pull_request = json["pull_request"];
-        }
+
+        pull_request = json["pull_request"];
 
         var title = "New PR #" + pull_request["number"] +
             "\nwith base " + pull_request["base"]["ref"] +
