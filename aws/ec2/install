@@ -26,8 +26,8 @@ ruby global 2.5.1
 # Install Bundler
 gem install bundler
 
-# Install jwt
-gem install jwt
+# Install jwt & octokit for communicating with GitHub
+gem install jwt octokit
 
 # Install rbspy
 mkdir ~/rbspy
