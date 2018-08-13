@@ -17,7 +17,7 @@ bundle update
 NUMBER_OF_RUNS=3
 RESULTS="$(pwd)/results.csv"
 if [[ ! -s $RESULTS ]]; then
-	echo "Jekyll version, user time in seconds, site" > $RESULTS
+	echo "Jekyll version, user time in seconds, site, Maximum memory, Number of file writes, Number of file reads" > $RESULTS
 fi
 
 if [[ -n $PR ]]; then
@@ -65,7 +65,7 @@ for SITE in $(cat "site-list"); do
 		git clone --recurse-submodules -q "$SITE" "$SOURCE"
 	fi
 	for ((i=0; i<NUMBER_OF_RUNS; ++i)); do
-		"$TIME" -ao "$RESULTS" -f"$VERSION,%U,$SITE" \
+		"$TIME" -ao "$RESULTS" -f"$VERSION,%U,$SITE,%M,%O,%I" \
 			bundle exec jekyll build -s "$SOURCE" -d "$DESTINATION" --trace
 	done
 
