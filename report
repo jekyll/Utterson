@@ -52,8 +52,8 @@ end
 
 puts markdown_header if ENV.key?("REF") && ENV.key?("PR")
 
-puts "| ref                                      | build time in seconds | max memory |"
-puts "|:-----------------------------------------|----------------------:|-----------:|"
+puts "| ref                                      | build time in seconds | max memory | min memory |"
+puts "|:-----------------------------------------|----------------------:|-----------:|-----------:|"
 
 summed_results = {}
 site_results = {}
@@ -68,7 +68,8 @@ results.each do |row|
   summed_results[ref] ||= {
     :ref     => (ref =~ %r!\A(?:[0-9a-f]+|#\d+)\Z!) ? ref : "`#{ref}`",
     :time    => 0.0,
-    :max_mem => 0
+    :max_mem => row[3],
+    :min_mem => row[3]
   }
   site_results[site][:time ] += row[1] if ref[0] == "##{ENV["PR"]}"
   summed_results[ref][:time] += row[1]
@@ -76,7 +77,7 @@ results.each do |row|
 end
 
 summed_results.each do |ref, data|
-  puts format("| %<ref>-40s | %<time>21.2f | %<max_mem>10d |", data)
+  puts format("| %<ref>-40s | %<time>21.2f | %<max_mem>10d | %<min_mem>10d |", data)
 end
 
 if ENV.key?("REF") && ENV.key?("PR")
