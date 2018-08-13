@@ -58,20 +58,25 @@ puts "|:-----------------------------------------|----------------------:|------
 summed_results = {}
 site_results = {}
 results.each do |row|
-  summed_results[row[0]] = [0.0,0] unless summed_results.key?(row[0])
-  site_results[row[2]] ||= {
-    :flamegraph => linkify_flamegraph(row[2]),
-    :site       => linkify_site(row[2]),
+  ref  = row[0]
+  site = row[2]
+  site_results[site] ||= {
+    :flamegraph => linkify_flamegraph(site),
+    :site       => linkify_site(site),
     :time       => 0.0,
   }
-  summed_results[row[0]][0] += row[1]
-  summed_results[row[0]][1]  = row[3] if row[3] > summed_results[row[0]][1]
-  site_results[row[2]][:time] += row[1] if row[0] == "##{ENV["PR"]}"
+  summed_results[ref] ||= {
+    :ref     => (ref =~ %r!\A(?:[0-9a-f]+|#\d+)\Z!) ? ref : "`#{ref}`",
+    :time    => 0.0,
+    :max_mem => 0
+  }
+  site_results[site][:time ] += row[1] if ref[0] == "##{ENV["PR"]}"
+  summed_results[ref][:time] += row[1]
+  summed_results[ref][:max_mem] = row[3] if row[3] > summed_results[ref][:max_mem]
 end
 
 summed_results.each do |ref, data|
-  ref = "`#{ref}`" unless ref =~ %r!\A(?:[0-9a-f]+|#\d+)\Z!
-  puts format("| %-40s | %21.2f | %10d |", ref, data[0], data[1])
+  puts format("| %<ref>-40s | %<time>21.2f | %<max_mem>10d |", data)
 end
 
 if ENV.key?("REF") && ENV.key?("PR")
