@@ -55,9 +55,9 @@ if [[ -n $FLAMEGRAPH ]]; then
 fi
 
 for SITE in $(cat "site-list"); do
-	echo ""
-	echo "Sampling: $SITE"
-	echo ""
+	echo "
+________________________________________________________________________________
+          Sampling: $SITE"
 	SOURCE="$TMPDIR/source/${SITE##*/}"
 	DESTINATION=${SOURCE/source/destination}
 	SVG_PATH="docs/$REF/${SITE##*/}"
