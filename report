@@ -12,6 +12,15 @@ def linkify_sha(ref, repo)
   "[`#{ref[0...7]}`](#{File.join(repo, "commit", ref)})"
 end
 
+def linkify_flamegraph(site)
+  site = site.split("/").last
+  "[&#x1f525;&#xfe0f;](https://utterson.pathawks.com/#{ENV["REF"]}/#{site}.svg)"
+end
+
+def linkify_site(site)
+  "[#{site.split("/").last}](#{site})"
+end
+
 def markdown_header
   repo_url = ENV.fetch("HTML_URL", "https://github.com/jekyll/jekyll")
   ref = ENV["REF"]
@@ -31,7 +40,15 @@ def markdown_header
   HEADER
 end
 
-results = CSV.table("results.csv")
+begin
+  results = CSV.table("results.csv")
+rescue Errno::ENOENT
+  puts <<~MSG
+    Cannot open file results.csv
+    You must run ./bench before running ./report
+  MSG
+  exit 1
+end
 
 puts markdown_header if ENV.key?("REF") && ENV.key?("PR")
 
@@ -39,12 +56,32 @@ puts "| ref                                      | build time in seconds |"
 puts "|:-----------------------------------------|----------------------:|"
 
 summed_results = {}
+site_results = {}
 results.each do |row|
   summed_results[row[0]] = 0.0 unless summed_results.key?(row[0])
+  site_results[row[2]] ||= {
+    :flamegraph => linkify_flamegraph(row[2]),
+    :site       => linkify_site(row[2]),
+    :time       => 0.0,
+  }
   summed_results[row[0]] += row[1]
+  site_results[row[2]][:time] += row[1] if row[0] == "##{ENV["PR"]}"
 end
 
 summed_results.each do |ref, time|
   ref = "`#{ref}`" unless ref =~ %r!\A(?:[0-9a-f]+|#\d+)\Z!
   puts format("| %-40s | %21.2f |", ref, time)
+end
+
+if ENV.key?("REF") && ENV.key?("PR")
+  puts <<~HEADER
+
+    Below is a table with the total build time for each site (summed total of all builds against this commit)
+
+    |  | site | build time in seconds |
+    |--|:-----|----------------------:|
+  HEADER
+  site_results.values.each do |data|
+    puts format "| %<flamegraph>s | %<site>s | %<time>.2f |", data
+  end
 end
