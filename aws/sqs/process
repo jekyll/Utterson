@@ -57,7 +57,10 @@ aws sqs change-message-visibility --receipt-handle "$RECEIPT_HANDLE" --queue-url
 PR="$PR" REF="$HEAD_SHA" HTML_URL="$HTML_URL" ./report > "docs/$HEAD_SHA.md"
 cat "docs/$HEAD_SHA.md"
 ./aws/s3/generate-and-upload-site
+# Delete report
 rm "docs/$HEAD_SHA.md"
+# Delete flamegraphs associated with a report
+rm -rf "docs/$HEAD_SHA"
 
 # If everything was successful, we can delete this message from SQS
 aws sqs delete-message --receipt-handle "$RECEIPT_HANDLE" --queue-url "$QUEUE_URL"
