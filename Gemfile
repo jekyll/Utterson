@@ -10,28 +10,25 @@ else
   gem "jekyll", git: repo, branch: "master"
 end
 
-gem "jekyll-sass-converter"
-gem "kramdown"
+# GitHub Pages
+gem "jekyll-avatar"
+gem "jekyll-coffeescript"
 gem "jekyll-commonmark-ghpages"
-gem "jekyll-redirect-from"
-gem "jekyll-sitemap"
+gem "jekyll-default-layout"
 gem "jekyll-feed"
 gem "jekyll-gist"
-gem "jekyll-paginate"
-gem "jekyll-coffeescript"
-gem "jekyll-seo-tag"
 gem "jekyll-github-metadata"
-gem "jekyll-avatar"
-gem "jekyll-remote-theme"
-gem "jemoji"
 gem "jekyll-mentions"
-gem "jekyll-relative-links"
 gem "jekyll-optional-front-matter"
+gem "jekyll-paginate"
 gem "jekyll-readme-index"
-gem "jekyll-default-layout"
-gem "jekyll-titles-from-headings"
+gem "jekyll-redirect-from"
+gem "jekyll-relative-links"
+gem "jekyll-remote-theme"
+gem "jekyll-sass-converter"
+gem "jekyll-seo-tag"
+gem "jekyll-sitemap"
 gem "jekyll-swiss"
-gem "jekyll-theme-primer"
 gem "jekyll-theme-architect"
 gem "jekyll-theme-cayman"
 gem "jekyll-theme-dinky"
@@ -41,22 +38,29 @@ gem "jekyll-theme-merlot"
 gem "jekyll-theme-midnight"
 gem "jekyll-theme-minimal"
 gem "jekyll-theme-modernist"
+gem "jekyll-theme-primer"
 gem "jekyll-theme-slate"
 gem "jekyll-theme-tactile"
 gem "jekyll-theme-time-machine"
+gem "jekyll-titles-from-headings"
+gem "jemoji"
+gem "kramdown"
 
-gem "jekyll-extract-element" # CloudCannon/base-jekyll-template
-gem "jekyll-archives" # CloudCannon/base-jekyll-template
+# CloudCannon/base-jekyll-template
+gem "jekyll-archives"
+gem "jekyll-extract-element"
 
-gem "jekyll-include-cache" # DirtyF/frank.taillandier.me
-gem "jekyll-last-modified-at" # DirtyF/frank.taillandier.me
-gem "jekyll-tidy" # DirtyF/frank.taillandier.me
-gem "jekyll-cloudinary", group: :jekyll_plugins # DirtyF/frank.taillandier.me
-gem "classifier-reborn" # DirtyF/frank.taillandier.me
+# DirtyF/frank.taillandier.me
+gem "classifier-reborn"
+gem "jekyll-cloudinary", group: :jekyll_plugins
+gem "jekyll-include-cache"
+gem "jekyll-last-modified-at"
+gem "jekyll-tidy"
 
-gem "redcarpet" # 18F/federalist-docs
-gem "uswds-jekyll" # 18F/federalist-docs
-gem "jekyll_pages_api_search", group: :jekyll_plugins # 18F/federalist-docs
+# 18F/federalist-docs
+gem "jekyll_pages_api_search", group: :jekyll_plugins
+gem "redcarpet"
+gem "uswds-jekyll"
 
 group :dev do
   gem "rubocop", "~> 0.60.0"
