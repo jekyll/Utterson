@@ -63,5 +63,5 @@ gem "redcarpet"
 gem "uswds-jekyll"
 
 group :dev do
-  gem "rubocop", "~> 0.60.0"
+  gem "rubocop", "~> 0.61.0"
 end
