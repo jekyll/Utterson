@@ -1,5 +1,5 @@
 language: ruby
-rvm: 2.4
+rvm: 2.5
 cache: bundler
 
 branches:
@@ -16,6 +16,6 @@ before_script:
 matrix:
   include:
   - name: Rubocop
-    script: bundle exec rubocop -D
+    script: bundle exec rubocop -S -D -E
   - name: bench
     script: ./bench
